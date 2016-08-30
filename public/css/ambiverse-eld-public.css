@@ -1,0 +1,299 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+
+.ambiverse-eld-wrap {
+    /*background-color: #ebebeb;*/
+
+}
+
+.isloading-wrapper.isloading-right {
+    margin-left: 10px;
+}
+.isloading-overlay {
+    position: relative;
+    text-align: center;
+}
+.isloading-overlay .isloading-wrapper {
+    background: #FFFFFF;
+    -webkit-border-radius: 7px;
+    -webkit-background-clip: padding-box;
+    -moz-border-radius: 7px;
+    -moz-background-clip: padding;
+    border-radius: 7px;
+    background-clip: padding-box;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    top: 10%;
+    z-index: 9000;
+}
+
+#settings-threshold .slider-selection {
+    background: #BABABA;
+}
+
+.entry-content label {
+    font-weight: 400;
+    margin-bottom: 4px !important;
+    padding-top: 0 !important;
+}
+
+.entry-content .settings {
+    font-size: 10pt;
+    color: #333;
+}
+
+.entry-content .settings .form-control {
+    height: 30px;
+}
+
+.entry-content .form-group {
+    padding: 5px;
+    margin-bottom: 0;
+}
+
+/*.entry-content .row {*/
+    /*margin-left: -5px !important;*/
+    /*margin-right: -5px !important;*/
+/*}*/
+
+
+
+.mention {
+    position: relative;
+    border-bottom: 2px solid transparent;
+    display: inline;
+    font-weight: 600;
+}
+
+.mention.red {
+    color: #d9534f;
+    border-bottom-color: #d43f3a;
+}
+
+.mention.light-green {
+    color: #80c9a4;
+    border-bottom-color: #abe2c6;
+}
+
+.mention.blue {
+    color: #337ab7;
+    border-bottom-color: #2e6da4;
+}
+
+.mention.green {
+    color: #449d44;
+    border-bottom-color: #398439;
+}
+
+.mention.light-blue {
+    color: #5bc0de;
+    border-bottom-color: #46b8da;
+}
+
+.mention.orange {
+    color: #f0ad4e;
+    border-bottom-color: #eea236;
+}
+
+.mention.gray {
+    color: #333;
+    border-bottom: 1px dotted #777;
+}
+
+.mention.selected {
+    position: relative;
+    border-bottom: 2px solid transparent;
+    /*background-color: #fecebf;
+    border-bottom-color: #e2534f;*/
+
+}
+
+.mention.red.selected {
+    background-color: #fecebf;
+    border-bottom-color: #ac2925;
+    color: #c9302c;
+}
+
+.mention.blue.selected {
+    background-color: #b9e6fc; //#d9edf7;
+    border-bottom-color: #204d74;
+    color: #2e6da4;
+}
+
+.mention.green.selected {
+    background-color: #bfffbf;
+    border-bottom-color: #398439;
+    color: #449d44;
+}
+
+.mention.light-blue.selected {
+    background-color: #d9f1fd; //#d9edf7;
+    border-bottom-color: #269abc;
+    color: #31b0d5;
+}
+
+.mention.light-green.selected {
+    background-color: #bfeede;
+    border-bottom-color: #28b473;
+    color: #51c891;
+}
+
+.mention.orange.selected {
+    background-color: #fbdfb7;
+    border-bottom-color: #ec971f;
+    color: #ec971f;
+}
+
+.mention.gray.selected {
+    background-color: #ebebeb;
+    border-bottom-color: #777;
+    color: #333;
+}
+
+.entity-box {
+    padding: 15px;
+    border: 1px #ebebeb solid;
+    background: #fff;
+    /*box-shadow: 0 1px 2px rgba(0,0,0,.1);*/
+    box-shadow: 0 10px 6px -6px #777;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    height: 250px;
+    max-height: 200px;
+
+    font-size: 10pt;
+    color: #555;
+}
+
+.entity-box h4 {
+    color: #555;
+    font-size: 11pt;
+    width: 70%;
+}
+.entity-box img {
+    width: 60px;
+}
+
+.entity-box .fa {
+     font-size: 10pt !important;
+     width: auto !important;;
+     height: auto !important;;
+     line-height: inherit !important;;
+     padding: 0 !important;;
+     text-align: center !important;;
+}
+
+
+/*==================================================
+ * Effect 7
+ * ===============================================*/
+.entity-box.selected
+{
+    /*position:relative;*/
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+.entity-box.selected:before, .entity-box.selected:after
+{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    box-shadow:0 0 20px rgba(0,0,0,0.8);
+    top:0;
+    bottom:0;
+    left:10px;
+    right:10px;
+    border-radius:100px / 10px;
+}
+.entity-box.selected:after
+{
+    right:10px;
+    left:auto;
+    transform:skew(8deg) rotate(3deg);
+}
+
+.entity-box.blue.selected
+{
+    box-shadow:0 1px 4px rgba(32, 77, 116, 0.5), 0 0 40px rgba(32, 77, 116, 0.2) inset;
+}
+
+.entity-box.green.selected
+{
+    box-shadow:0 1px 4px rgba(57, 132, 57, 0.5), 0 0 40px rgba(57, 132, 57, 0.2) inset;
+}
+.entity-box.light-blue.selected
+{
+    box-shadow:0 1px 4px rgba(38, 154, 188, 0.5), 0 0 40px rgba(38, 154, 188, 0.2) inset;
+}
+.entity-box.orange.selected
+{
+    box-shadow:0 1px 4px rgba(213, 133, 18, 0.5), 0 0 40px rgba(213, 133, 18, 0.2) inset;
+}
+.entity-box.light-green.selected
+{
+    box-shadow:0 1px 4px rgba(40, 180, 115, 0.5), 0 0 40px rgba(40, 180, 115, 0.2) inset;
+}
+
+.entity-box.red.selected
+{
+    box-shadow:0 1px 4px rgba(172, 41, 37, 0.5), 0 0 40px rgba(172, 41, 37, 0.2) inset;
+}
+
+
+.entity-box .ribbon {
+    border-width: 1px 1px 2px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    margin: 0 !important;
+    padding: 4px 20px;
+    position: absolute;
+    right: 10px !important;
+    top: 5px;
+    font-size: 10pt;
+
+    background-image: radial-gradient(transparent 30%, rgba(0, 0, 0, 0.2));
+    border: 0 solid rgba(0,0,0,0.2);
+    color: #fff;
+}
+
+.entity-box .ribbon:after {
+    border-width: 2px;
+    border-style: solid;
+    border-color: #134 transparent transparent #134;
+    bottom: -4px;
+    content: "";
+    position: absolute;
+    right: 1px;
+}
+
+.entity-box .ribbon.blue {
+    background: #2e6da4;
+}
+.entity-box .ribbon.red {
+    background: #c9302c;
+}
+.entity-box .ribbon.light-blue {
+    background: #31b0d5;
+}
+
+.entity-box .ribbon.green {
+    background: #449d44;
+}
+
+.entity-box .ribbon.light-green {
+    background: #51c891;
+}
+
+.entity-box .ribbon.orange {
+    background: #ec971f;
+}
+
+.entity-box .ribbon.gray {
+    background: #777;
+}
+
+
+
