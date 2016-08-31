@@ -208,6 +208,7 @@
                    } else {
                        var entity = {};
                        entity["id"] = mention["entity"].id+":"+mention["text"];
+                       mention["entity"].id = entity["id"];
                        entity["score"] = mention["entity"].score;
                        entity["name"] = mention.text;
                        allEntities.push(entity);
@@ -333,8 +334,6 @@
             var entity = value["entity"];
 
             var type =  "Unknown";
-            //console.log("CATS "+entity["categories"]);
-
             if('categories' in entity) {
                 type = determine_type(entity["categories"]);
             }
