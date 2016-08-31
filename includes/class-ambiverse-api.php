@@ -165,10 +165,15 @@ class Ambiverse_API
 
         $request_args = array(
             'body' => $data,
-            'timeout' => 10,
+            'timeout' => 45,
             'redirection' => 5,
+            'httpversion' => '1.0',
+            'blocking' => true,
             'headers' => $this->get_headers(),
         );
+
+        //echo json_encode($request_args);
+        //wp_die();
 
 
         $url = $endpoint . $method;

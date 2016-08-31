@@ -259,7 +259,7 @@
                 _ajax_nonce: ajax_obj.nonce
             },
             success: function(data) {
-                //.log(data);
+                //console.log(data);
 
                 if(typeof data["code"]!=='undefined' && data["code"]!=="200") {
 
@@ -323,6 +323,7 @@
     }
 
     function annotate_text(mentions) {
+
         var annotatedArray = [];
         var prevOffset = 0;
         mentions.forEach(function(value, key, mentions) {

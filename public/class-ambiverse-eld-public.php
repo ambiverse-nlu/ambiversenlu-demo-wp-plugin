@@ -134,7 +134,7 @@ class Ambiverse_ELD_Public {
             $data = array(
                 "coherentDocument" => $_POST['coherentDocument'],
                 "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
-                "text" => $_POST['text'],
+                "text" =>  preg_replace('/\\\\\"/',"\"", $_POST['text']),
             );
         }
         //echo json_encode($data);
