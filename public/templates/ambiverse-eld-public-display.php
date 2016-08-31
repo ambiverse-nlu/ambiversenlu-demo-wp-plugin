@@ -15,7 +15,7 @@
 
 ?>
 <div class="ambiverse-eld-wrap">
-    <h2><?php echo esc_html_e('Try our API', 'ambiverse-eld'); ?></h2>
+    <h2><?php echo esc_html_e('Entity Linking Demo', 'ambiverse-eld'); ?></h2>
     <div class="row">
     <div class="col-md-9 form-group" style="padding-left: 15px;">
         <?php do_action('ambiverse-eld-content', $args); ?>

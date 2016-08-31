@@ -15,26 +15,26 @@
 <h4 style="padding-left: 20px;"><i class="fa fa-cog"></i> Settings</h4>
     <div class="panel-body">
         <form class="form-horizontal">
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-5 control-label">Coherence</label>-->
+<!--            <div class="col-sm-7">-->
+<!--            <label>-->
+<!--                <input type="checkbox" id="settings-coherent" --><?php //if($args['coherent-document']==true) {echo "checked='checked'";} ?><!--/> Coherent Text-->
+<!--            </label>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="form-group">
-            <label class="col-sm-4 control-label">Coherence</label>
-            <div class="col-sm-8">
-            <label>
-                <input type="checkbox" id="settings-coherent" <?php if($args['coherent-document']==true) {echo "checked='checked'";} ?>/> Coherent Text
-            </label>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="settings-threshold" class="col-sm-4 control-label">Confidence</label>
-            <div class="col-sm-8">
+            <label for="settings-threshold" class="col-sm-5 control-label">Confidence threshold</label>
+            <div class="col-sm-7" style="padding-top: 10px;">
                 <input id="settings-threshold"
                        data-slider-id='settings-threshold' type="text"
                        data-slider-min="0" data-slider-max="1" data-slider-step="0.1" data-slider-value="<?php echo $args["confidence-threshold"]; ?>"
-                       style="width: 100%; padding-left: 15px;"/>
+                       style="width: 100%;"/>
             </div>
         </div>
         <div class="form-group">
-            <label for="settings-language" class="col-sm-4 control-label">Language</label>
-            <div class="col-sm-8">
+            <label for="settings-language" class="col-sm-5 control-label">Language</label>
+            <div class="col-sm-7">
             <select id="settings-language" class="form-control">
                 <option value="auto">Auto</option>
                 <?php

@@ -207,13 +207,15 @@
                        allEntities.push(entityMetadata[mention["entity"].id]);
                    } else {
                        var entity = {};
-                       entity["id"] = mention["entity"].id;
+                       entity["id"] = mention["entity"].id+":"+mention["text"];
                        entity["score"] = mention["entity"].score;
                        entity["name"] = mention.text;
                        allEntities.push(entity);
                    }
 
                 });
+
+                //console.log(allEntities);
 
                 $("#ambiverse-annotated-text").html(annotate_text(mentions));
                 $("#ambiverse-result-entities").html(entity_view(allEntities));
@@ -240,6 +242,9 @@
 
         var textInput = $("#ambiverse-text-input");
 
+        var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
+        var confidenceThreshold = thresholdSlider.slider('getValue');
+        var language = $("#settings-language").val();
         $.ajax({
             type : "post",
             dataType : "json",
@@ -247,13 +252,13 @@
             data : {
                 action: "tag_analyze_document",
                 text : $(textInput).val(),
-                coherentDocument : $("#settings-coherent").prop("checked"),
-                confidenceThreshold : thresholdSlider.slider('getValue'),
-                language : $("#settings-language").val(),
+                coherentDocument : coherentDocument,
+                confidenceThreshold : confidenceThreshold,
+                language : language,
                 _ajax_nonce: ajax_obj.nonce
             },
             success: function(data) {
-                //console.log(data);
+                //.log(data);
 
                 if(typeof data["code"]!=='undefined' && data["code"]!=="200") {
 
@@ -265,16 +270,13 @@
                     text = text.replaceAll("[[", "");
                     text = text.replaceAll("]]", "");
 
+                    //console.log(text);
+
                     var allEntities = [];
                     mentions = data["matches"];
                     if (typeof mentions !== 'undefined') {
                         mentions.forEach(function (value, key, mentions) {
                             allEntities.push(value["entity"]);
-                            //TODO: Remove this line when the API returns id instead of the stupid kgId!!!
-                            value["entity"]["id"] = value["entity"].kgId;
-                            if (value["entity"].id.includes("--OOKBE--")) {
-                                value["entity"].id = value["entity"].id + ':' + value["text"];
-                            }
                         });
                     }
 
@@ -349,7 +351,7 @@
             annotatedArray.push(text.substring(prevOffset, endIndex));
         }
 
-        return annotatedArray.join("");
+        return annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
     }
 
     function entity_view(entities) {
@@ -399,13 +401,15 @@
         viewArray.push('<h4 class="media-heading">');
         viewArray.push(entity.name);
         viewArray.push('</h4>')
-        if(typeof entity.description !=='undefined' && entity.description.length > 150) {
+        if(typeof entity.description !=='undefined' && entity.description.length > 120) {
             //viewArray.push('<small>');
-            viewArray.push(entity.description.substring(0, 150));
+            viewArray.push(entity.description.substring(0, 120));
             viewArray.push(' ... ');
         }else {
             viewArray.push(entity.description);
         }
+
+
         if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
             //viewArray.push('</small>');
             viewArray.push('<div>');
@@ -422,10 +426,11 @@
         viewArray.push('<div><strong>Score:</strong> ');
         viewArray.push(entity.score);
         viewArray.push('</div>');
-        if(entity.id.includes("--OOKBE--")) {
-            viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px;"><small>*This Entity is recognize, but we don\'t have data in our Knowledge Base.</small></div>');
-        }
+
         viewArray.push('</div>');
+        if(entity.id.includes("--OOKBE--")) {
+            viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
+        }
         viewArray.push('</div>');
         //viewArray.push('</div>');
 

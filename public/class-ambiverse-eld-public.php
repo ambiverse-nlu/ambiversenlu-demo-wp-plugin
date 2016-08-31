@@ -184,8 +184,9 @@ class Ambiverse_ELD_Public {
         $defaults['confidence-threshold'] 	=  $this->options['settings-threshold-document'];
         $defaults['text']                   =  $content;
         $defaults['class']                  = "form-control";
-        $defaults['rows']                   = 8;
-        $defaults['cols']                   = 8;
+        $defaults['rows']                   = 7;
+        $defaults['cols']                   = 7;
+        $defaults['max-length']             = 2000;
         $defaults['id']                     = "ambiverse-text-input";
         $defaults['name']                   = "ambiverse-text-input";
 

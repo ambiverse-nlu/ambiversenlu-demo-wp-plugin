@@ -37,8 +37,7 @@
 
 .entry-content label {
     font-weight: 400;
-    margin-bottom: 4px !important;
-    padding-top: 0 !important;
+
 }
 
 .entry-content .settings {
@@ -50,8 +49,8 @@
     height: 30px;
 }
 
-.entry-content .form-group {
-    padding: 5px;
+.entry-content .settings .form-group {
+    padding: 3px;
     margin-bottom: 0;
 }
 

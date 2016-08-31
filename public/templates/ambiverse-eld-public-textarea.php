@@ -17,6 +17,7 @@
     id="<?php echo esc_attr($args['id']); ?>"
     name="<?php echo esc_attr($args['name']); ?>"
     rows="<?php echo esc_attr($args['rows']); ?>"
+    maxlength="<?php echo esc_attr($args['max-length']); ?>"
     data-coherent-document="<?php echo esc_attr($args['coherent-document']); ?>"
     data-confidence-threshold="<?php echo esc_attr($args['confidence-threshold']); ?>"><?php
     echo esc_textarea($args['text']); ?></textarea>
