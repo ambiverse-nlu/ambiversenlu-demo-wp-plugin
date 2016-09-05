@@ -21,9 +21,11 @@
 <!-- Tab panes -->
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="link">
+        <div id="ambiverse-json-linking-loader"></div>
         <?php do_action('ambiverse-eld-json-output'); ?>
     </div>
     <div role="tabpanel" class="tab-pane" id="meta">
+        <div id="ambiverse-json-meta-loader"></div>
         <?php do_action('ambiverse-eld-json-output-meta'); ?>
     </div>
 

@@ -177,6 +177,7 @@ class Ambiverse_API
 
 
         $url = $endpoint . $method;
+        //$url = "http://localhost:8080/aida/analyze";
         $response = wp_remote_post( esc_url_raw($url), $request_args );
 
         try {

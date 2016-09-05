@@ -127,14 +127,14 @@ class Ambiverse_ELD_Public {
             $data = array(
                 "coherentDocument" => $_POST['coherentDocument'],
                 "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
-                "text" => $_POST['text'],
+                "text" =>  str_replace('\\', '', $_POST['text']),//$_POST['text'],
                 "language" => $_POST["language"],
             );
         } else {
             $data = array(
                 "coherentDocument" => $_POST['coherentDocument'],
                 "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
-                "text" =>  preg_replace('/\\\\\"/',"\"", $_POST['text']),
+                "text" =>  str_replace('\\', '', $_POST['text']),
             );
         }
         //echo json_encode($data);
@@ -241,7 +241,7 @@ class Ambiverse_ELD_Public {
         $defaults['languages'] = $languages;
         $defaults['supported-languages'] = $supportedLanguagesString;
 
-        $args						        = shortcode_atts( $defaults, $atts, 'ambiverse-eld' );
+        $args = shortcode_atts( $defaults, $atts, 'ambiverse-eld' );
 
 
 

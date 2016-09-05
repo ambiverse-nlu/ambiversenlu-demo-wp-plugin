@@ -15,7 +15,7 @@
 
 ?>
 <div class="ambiverse-eld-wrap">
-    <h2><?php echo esc_html_e('Entity Linking Demo', 'ambiverse-eld'); ?></h2>
+<!--    <h2>--><?php //echo esc_html_e('Entity Linking Demo', 'ambiverse-eld'); ?><!--</h2>-->
     <div class="row">
     <div class="col-md-9 form-group" style="padding-left: 15px;">
         <?php do_action('ambiverse-eld-content', $args); ?>
@@ -30,7 +30,8 @@
     <?php //do_action('ambiverse-eld-after-content'); ?>
 
     <div id="result-wrapper" style="display: none;">
-        <h2><?php echo esc_html_e('Result', 'ambiverse-eld'); ?></h2>
+<!--        <h2>--><?php //echo esc_html_e('Result', 'ambiverse-eld'); ?><!--</h2>-->
+        <div>&nbsp;</div>
         <div id="loading">
             <?php do_action('ambiverse-eld-public-tab'); ?>
         </div>

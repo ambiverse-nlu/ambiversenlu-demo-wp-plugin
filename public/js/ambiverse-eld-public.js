@@ -53,11 +53,25 @@
 
         $('#ambiverse-text-input').autogrow({vertical: true, horizontal: false});
 
-        $("#analyze").click(function () {       //event
-            var this2 = this;                  //use in callback
+        $("#analyze").click(function () {
             analyze_text();
 
-        }); //End of analyze click event
+        });
+
+        $("#settings-language").change(function() {
+            analyze_text();
+        });
+
+        // With JQuery
+        thresholdSlider =  $('#settings-threshold').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+
+        $(thresholdSlider).change(function(){
+            analyze_text();
+        });
 
 
         $(document).on('mousedown', 'span.mention', function(e){
@@ -74,12 +88,7 @@
             select_mention_and_box(mention, boxToSelect, id);
         });
 
-        // With JQuery
-        thresholdSlider =  $('#settings-threshold').slider({
-            formatter: function(value) {
-                return 'Current value: ' + value;
-            }
-        });
+
     });
 
     function select_mention_and_box( mention, box, id ) {
@@ -109,7 +118,6 @@
         }
 
         mentions.forEach(function(value, key){
-            //console.log(value);
             $(value).addClass("selected");
         });
 
@@ -167,11 +175,12 @@
         var entityIds = [];
 
         entities.forEach(function(value, key, mentions) {
-            if(!value.id.includes("--OOKBE--")) {
+            if(!jQuery.isEmptyObject(value)) {
                 entityIds.push(value.id);
             }
         });
 
+        //console.log(entityIds);
         $.ajax({
             type : "post",
             dataType : "json",
@@ -199,41 +208,58 @@
                 }
 
                 var allEntities = [];
-                mentions.forEach(function (mention, key) {
-                   if(!mention["entity"].id.includes("--OOKBE--")) {
-                       var score = mention["entity"].score;
-                       mention["entity"] = entityMetadata[mention["entity"].id];
-                       mention["entity"].score = score;
+                var entitiesWithconfidences = {};
+
+                var mentionsCopy = clone(mentions);
+                mentionsCopy.forEach(function (mention, key) {
+                   if(!jQuery.isEmptyObject(mention["entity"])) {
+
+                       var confidence = mention["entity"].confidence;
+
+                       if(typeof entityMetadata[mention["entity"].id] !== 'undefined') {
+                           mention["entity"] = entityMetadata[mention["entity"].id];
+                       }
+                       if(mention["entity"].id in entitiesWithconfidences) {
+                           confidence = Math.max(confidence, entitiesWithconfidences[mention["entity"].id]);
+                       }
+
+                       mention["entity"]["confidence"] = confidence;
+                       entitiesWithconfidences[mention["entity"].id] = confidence;
                        allEntities.push(entityMetadata[mention["entity"].id]);
+
+
                    } else {
+
                        var entity = {};
-                       entity["id"] = mention["entity"].id+":"+mention["text"];
-                       mention["entity"].id = entity["id"];
-                       entity["score"] = mention["entity"].score;
+                       entity["id"] = mention["text"];
+                       //entity["confidence"] = 0;
                        entity["name"] = mention.text;
+                       mention["entity"] = entity;
                        allEntities.push(entity);
                    }
 
                 });
 
-                //console.log(allEntities);
-
-                $("#ambiverse-annotated-text").html(annotate_text(mentions));
+                $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy));
                 $("#ambiverse-result-entities").html(entity_view(allEntities));
             },
             error : function(xhr, textStatus, errorThrown) {
 
             },
             beforeSend: function() {
-
+                $("#ambiverse-json-output-meta code").text("");
                  $("#ambiverse-result-entities-loader").isLoading({
                      text: "Loading Entity Metadata ...",
                      position: "inside"
                  });
+                $("#ambiverse-json-meta-loader").isLoading({
+                    text: "Loading Entity Metadata JSON ...",
+                    position: "inside"
+                });
             },
             complete: function() {
                 $("#ambiverse-result-entities-loader").isLoading("hide");
-                //$("#loading").isLoading("hide");
+                $("#ambiverse-json-meta-loader").isLoading("hide");
             }
         })
     }
@@ -242,7 +268,6 @@
         var l = Ladda.create(  document.querySelector('.progress-button') );
 
         var textInput = $("#ambiverse-text-input");
-
         var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
         var confidenceThreshold = thresholdSlider.slider('getValue');
         var language = $("#settings-language").val();
@@ -261,7 +286,7 @@
             success: function(data) {
                 //console.log(data);
 
-                if(typeof data["code"]!=='undefined' && data["code"]!=="200") {
+                if(typeof data["code"]!=='undefined' && data["code"]!==200) {
 
                     $("#ambiverse-annotated-text").removeClass("well");
                     $("#ambiverse-annotated-text").addClass("alert alert-danger");
@@ -271,8 +296,6 @@
                     text = text.replaceAll("[[", "");
                     text = text.replaceAll("]]", "");
 
-                    //console.log(text);
-
                     var allEntities = [];
                     mentions = data["matches"];
                     if (typeof mentions !== 'undefined') {
@@ -280,7 +303,6 @@
                             allEntities.push(value["entity"]);
                         });
                     }
-
 
                     //Add the text to the json output and highlight the block
                     $("#ambiverse-json-output code").text(JSON.stringify(data, null, 2));
@@ -290,8 +312,8 @@
 
                     $("#ambiverse-annotated-text").html(annotate_text(mentions));
 
-                    //Get entity metadata for all entities in the text
-                    get_entity_metadata(allEntities);
+                     //Get entity metadata for all entities in the text
+                     get_entity_metadata(allEntities);
                 }
             },
             error : function(xhr, textStatus, errorThrown) {
@@ -304,8 +326,10 @@
                     $("#ambiverse-annotated-text").addClass("well");
                 }
 
+                $("#ambiverse-json-output code").text("");
                 $("#ambiverse-annotated-text").html("");
                 $("#ambiverse-result-entities").html("");
+
                 $("#result-wrapper").css('display', 'block');
                 l.start();
 
@@ -314,10 +338,16 @@
                     position: "inside"
                 });
 
+                $("#ambiverse-json-linking-loader").isLoading({
+                    text: "Loading Response JSON ...",
+                    position: "inside"
+                });
+
             },
             complete: function() {
                 l.stop();
                 $("#ambiverse-annotated-text").isLoading("hide");
+                $("#ambiverse-json-linking-loader").isLoading("hide");
             }
         });
     }
@@ -327,21 +357,30 @@
         var annotatedArray = [];
         var prevOffset = 0;
         mentions.forEach(function(value, key, mentions) {
-            //console.log(value);
+
             var mentionText = value["text"];
             var charLength = value["charLength"];
             var offset = value["charOffset"];
             var endIndex = offset + charLength;
             var entity = value["entity"];
 
+
             var type =  "Unknown";
-            if('categories' in entity) {
+            if(typeof entity !== 'undefined' && 'categories' in entity) {
                 type = determine_type(entity["categories"]);
             }
 
             if (endIndex <= text.length) {
                 annotatedArray.push(text.substring(prevOffset, offset));
-                annotatedArray.push("<span class='mention  "+ typeColors[type] +"' data-id='" + entity.id +"' data-score='" + value["entity"].score +"'>" + mentionText + "</span>");
+                annotatedArray.push("<span class='mention  "+ typeColors[type] +"'");
+
+                if(typeof entity !=='undefined' && 'id' in entity) {
+                    annotatedArray.push(" data-id='" + entity.id+"'");
+                }
+                if(typeof entity !=='undefined' && 'confidence' in entity) {
+                    annotatedArray.push("data-confidence='" + value["entity"].confidence +"'");
+                }
+                annotatedArray.push(">" + mentionText + "</span>");
                 prevOffset = endIndex;
             }
 
@@ -360,6 +399,7 @@
 
         viewArray.push('<div class="row">');
         entities.forEach(function (value, key, entities) {
+
             if(!renderedEntities.contains(value.id)) {
                 viewArray.push('<div class="col-md-4">');
                 viewArray.push(entity_box(value));
@@ -423,12 +463,14 @@
             });
             viewArray.push('</div>');
         }
-        viewArray.push('<div><strong>Score:</strong> ');
-        viewArray.push(entity.score);
-        viewArray.push('</div>');
+        if('confidence' in entity) {
+            viewArray.push('<div><strong>Confidence:</strong> ');
+            viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2));
+            viewArray.push('</div>');
+        }
 
         viewArray.push('</div>');
-        if(entity.id.includes("--OOKBE--")) {
+        if(!('confidence' in entity)) {
             viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
         }
         viewArray.push('</div>');
@@ -520,6 +562,40 @@
             if (i < 0) break;
         }
         return i;
+    }
+
+    function clone(obj) {
+        var copy;
+
+        // Handle the 3 simple types, and null or undefined
+        if (null == obj || "object" != typeof obj) return obj;
+
+        // Handle Date
+        if (obj instanceof Date) {
+            copy = new Date();
+            copy.setTime(obj.getTime());
+            return copy;
+        }
+
+        // Handle Array
+        if (obj instanceof Array) {
+            copy = [];
+            for (var i = 0, len = obj.length; i < len; i++) {
+                copy[i] = clone(obj[i]);
+            }
+            return copy;
+        }
+
+        // Handle Object
+        if (obj instanceof Object) {
+            copy = {};
+            for (var attr in obj) {
+                if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+            }
+            return copy;
+        }
+
+        throw new Error("Unable to copy obj! Its type isn't supported.");
     }
 
 })( jQuery );
