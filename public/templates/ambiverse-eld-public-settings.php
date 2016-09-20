@@ -26,10 +26,17 @@
         <div class="form-group">
             <label for="settings-threshold" class="col-sm-5 control-label">Confidence threshold</label>
             <div class="col-sm-7" style="padding-top: 10px;">
+               <div class="row">
+                   <div class="col-xs-9">
                 <input id="settings-threshold"
                        data-slider-id='settings-threshold' type="text"
-                       data-slider-min="0" data-slider-max="1" data-slider-step="0.1" data-slider-value="<?php echo $args["confidence-threshold"]; ?>"
+                       data-slider-min="0" data-slider-max="1" data-slider-step="0.005" data-slider-value="<?php echo $args["confidence-threshold"]; ?>"
                        style="width: 100%;"/>
+               </div>
+               <div class="col-xs-3" style="padding: 0px;">
+                   <small><span id="threshold-val"><?php echo $args["confidence-threshold"]; ?></span></small>
+               </div>
+               </div>
             </div>
         </div>
         <div class="form-group">

@@ -178,6 +178,13 @@ class Ambiverse_ELD_Admin
             array($this, 'section_disambiguation'),
             $this->plugin_name
         );
+
+        add_settings_section(
+            $this->plugin_name . '-usage',
+            apply_filters($this->plugin_name . 'section-title-settings-disambiguation', esc_html__('Usage', 'ambiverse-eld')),
+            array($this, 'section_usage'),
+            $this->plugin_name
+        );
     }
 
     /**
@@ -367,14 +374,10 @@ class Ambiverse_ELD_Admin
                 'id' => 'settings-api-version',
                 'selections' 	=> array(
                     0 => array(
-                        'value' => 'v1beta1',
-                        'label' =>  'v1beta1',
+                        'value' => 'v1beta3',
+                        'label' =>  'v1beta3',
                     ),
                     1 => array(
-                        'value' => 'v1beta2',
-                        'label' =>  'v1beta2',
-                    ),
-                    2 => array(
                         'value' => 'v1',
                         'label' =>  'v1',
                     ),
@@ -457,11 +460,11 @@ class Ambiverse_ELD_Admin
             array(
                 'description' 	=> 'Entities are related to each other',
                 'id' 			=> 'settings-threshold-document',
-                'value' 		=> '0',
+                'value' 		=> '0.075',
                 'slider-id' 			=> 'settings-threshold-document-slider',
                 'slider-min' 			=> '0',
                 'slider-max' 			=> '1',
-                'slider-step' 			=> '0.1'
+                'slider-step' 			=> '0.005'
 
             )
         );
@@ -504,6 +507,24 @@ class Ambiverse_ELD_Admin
     } // section_messages()
 
 
+    /**
+     * Creates a usage section
+     *
+     * @since 		0.9
+     * @param 		array 		$params 		Array of parameters for the section
+     * @return 		mixed 						The settings section
+     */
+    public function section_usage( $params ) {
+
+        $atts['settings-threshold-document'] = $this->options['settings-threshold-document'];
+        if( $this->options['settings-coherent-document']) {
+            $atts['settings-coherent-document'] = "true";
+        } else {
+            $atts['settings-coherent-document'] = "false";
+        }
+
+        include( plugin_dir_path( __FILE__ ) . 'partials/ambiverse-eld-admin-usage.php' );
+    } // section_messages()
 
     private function sanitizer( $type, $data ) {
         echo "TyPE $type";

@@ -69,6 +69,10 @@
             }
         });
 
+        $('#settings-threshold').on("slide", function(slideEvt) {
+            $("#threshold-val").text(slideEvt.value);
+        });
+
         $(thresholdSlider).change(function(){
             analyze_text();
         });
@@ -436,6 +440,22 @@
         viewArray.push('" onerror = "this.src=\'');
         viewArray.push(unknownImage);
         viewArray.push('\'">');
+        viewArray.push('<div>&nbsp;</div>');
+        if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
+            //viewArray.push('</small>');
+            viewArray.push('<div>');
+            entity.links.forEach(function (value, key) {
+
+                if(value.source==='Wikipedia') {
+                    viewArray.push('<a href="');
+                    viewArray.push(value.url);
+                    viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
+                    viewArray.push('</a>');
+                }
+            });
+            viewArray.push('</div>');
+        }
+
         viewArray.push('</div>');
         viewArray.push('<div class="media-body">');
         viewArray.push('<h4 class="media-heading">');
@@ -450,20 +470,9 @@
         }
 
 
-        if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
-            //viewArray.push('</small>');
-            viewArray.push('<div>');
-            viewArray.push('<i class="fa fa-1 fa-external-link-square" aria-hidden="true"></i> ');
-            entity.links.forEach(function (value, key) {
-                viewArray.push('<a href="');
-                viewArray.push(value.url);
-                viewArray.push('" target="_blank">');
-                viewArray.push(value.source);
-                viewArray.push('</a>');
-            });
-            viewArray.push('</div>');
-        }
+
         if('confidence' in entity) {
+            viewArray.push('<div>&nbsp;</div>');
             viewArray.push('<div><strong>Confidence:</strong> ');
             viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2));
             viewArray.push('</div>');
