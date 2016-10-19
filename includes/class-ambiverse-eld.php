@@ -194,7 +194,10 @@ class Ambiverse_ELD {
         $this->loader->add_action( 'wp_ajax_tag_analyze_document', $plugin_public, 'analyze_document_ajax_handler' );
         $this->loader->add_action( 'wp_ajax_tag_entity_metadata', $plugin_public, 'entity_metatada_ajax_handler' );
 
-
+        $this->loader->add_action( 'wp_ajax_nopriv_tag_analyze_document', $plugin_public, 'analyze_document_ajax_handler' );
+        $this->loader->add_action( 'wp_ajax_post_tag_analyze_document', $plugin_public, 'analyze_document_ajax_handler' );
+        $this->loader->add_action( 'wp_ajax_nopriv_tag_entity_metadata', $plugin_public, 'entity_metatada_ajax_handler' );
+        $this->loader->add_action( 'wp_ajax_post_tag_entity_metadata', $plugin_public, 'entity_metatada_ajax_handler' );
     }
 
     /**

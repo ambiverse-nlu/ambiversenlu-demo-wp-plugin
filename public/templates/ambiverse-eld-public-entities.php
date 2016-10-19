@@ -11,5 +11,5 @@
  */
 
 ?>
-<div id="ambiverse-result-entities-loader"></div>
+<div id="ambiverse-result-entities-loader" style="margin: 5px 5px 20px 5px;"></div>
 <div id="ambiverse-result-entities"></div>

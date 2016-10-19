@@ -14,14 +14,14 @@
 //do_action('ambiverse-eld-before-content');
 
 ?>
-<div class="ambiverse-eld-wrap">
+<div class="ambiverse-eld-wrap" id="entity-linking-demo">
 <!--    <h2>--><?php //echo esc_html_e('Entity Linking Demo', 'ambiverse-eld'); ?><!--</h2>-->
     <div class="row">
     <div class="col-md-9 form-group" style="padding-left: 15px;">
         <?php do_action('ambiverse-eld-content', $args); ?>
         <span id="helpBlock" class="help-block"><small><?php esc_html_e('Enter any text in ', 'ambiverse-eld'); ?><?php echo $args['supported-languages']; ?></small></span>
     </div>
-    <div class="col-md-3 form-group">
+    <div class="col-md-3 form-group settings-panel">
         <?php do_action('ambiverse-eld-public-settings', $args); ?>
     </div>
     </div>

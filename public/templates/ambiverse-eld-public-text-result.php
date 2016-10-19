@@ -11,4 +11,4 @@
  * @subpackage Ambiverse_ELD/public/partials
  */
 ?>
-<div id="ambiverse-annotated-text" class="well"></div>
+<div id="ambiverse-annotated-text" class="well" style="margin: 5px 5px 20px 5px;"></div>

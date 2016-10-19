@@ -97,12 +97,15 @@ class Ambiverse_ELD_Public {
          * between the defined hooks and the functions defined in this
          * class.
          */
+        wp_enqueue_script( 'underscore-demo', plugin_dir_url( __FILE__ ) . 'js/underscore-min.js', array(), $this->version, false );
         wp_enqueue_script( 'ladda-spin-script', plugin_dir_url( __FILE__ ) . 'js/spin.min.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'ladda-script', plugin_dir_url( __FILE__ ) . 'js/ladda.min.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'highlightjs-script', plugin_dir_url( __FILE__ ) . 'js/highlight.pack.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'isloading-script', plugin_dir_url( __FILE__ ) . 'js/jquery.isloading.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'autogrow-script', plugin_dir_url( __FILE__ ) . 'js/jquery.ns-autogrow.min.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'bootstrap-slider-script', plugin_dir_url( __FILE__ ) . 'js/bootstrap-slider.js', array( 'jquery' ), $this->version, false );
+        wp_enqueue_script( 'jquery-bbq', plugin_dir_url( __FILE__ ) . 'js/jquery.ba-bbq.min.js', array( 'jquery' ), $this->version, false );
+
         wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ambiverse-eld-public.js', array( 'jquery' ), $this->version, false );
 
         $nonce = wp_create_nonce('ambiverse-analyze');
@@ -120,6 +123,7 @@ class Ambiverse_ELD_Public {
      * @return json $response JSON of the text analyzis API
      */
     function analyze_document_ajax_handler() {
+
         check_ajax_referer('ambiverse-analyze');
         $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $this->options["settings-api-endpoint"]);
 
@@ -137,8 +141,6 @@ class Ambiverse_ELD_Public {
                 "text" =>  str_replace('\\', '', $_POST['text']),
             );
         }
-        //echo json_encode($data);
-        //wp_die();
 
         $response = $api->call_entity_linking('analyze', $data);
 
@@ -232,11 +234,12 @@ class Ambiverse_ELD_Public {
                 $supportedLanguagesString.=", ";
             }
             if($i == sizeof($supportedLanguages)-1){
-                $supportedLanguagesString.=" and ";
+                $supportedLanguagesString.=", or ";
             }
             $supportedLanguagesString.=$supportedLanguages[$i];
         }
 
+        $supportedLanguagesString.=".";
 
         $defaults['languages'] = $languages;
         $defaults['supported-languages'] = $supportedLanguagesString;

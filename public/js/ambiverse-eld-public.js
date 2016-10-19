@@ -48,17 +48,28 @@
     var renderedEntities = [];
     var thresholdSlider;
 
+    var state = $.deparam.querystring();
+
+
     var unknownImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M-1-1h62v62H-1z%22%2F%3E%3Ctext%20transform%3D%22translate(19.543%2044.675)%22%20fill%3D%22%23ABABAB%22%20font-family%3D%22%27MyriadPro-Bold%27%22%20font-size%3D%2250%22%3E%3F%3C%2Ftext%3E%3C%2Fsvg%3E";
     $(function() {
 
         $('#ambiverse-text-input').autogrow({vertical: true, horizontal: false});
 
+        $('#ambiverse-text-input').bind('input propertychange change keyup', function() {
+            updateState();
+        });
+
+
         $("#analyze").click(function () {
             analyze_text();
 
+            //Log the event in Google Analytics
+            ga('send', 'event', 'Buttons', 'clicked', 'Analyze Button');
         });
 
         $("#settings-language").change(function() {
+            updateState();
             analyze_text();
         });
 
@@ -69,11 +80,11 @@
             }
         });
 
-        $('#settings-threshold').on("slide", function(slideEvt) {
-            $("#threshold-val").text(slideEvt.value);
-        });
 
-        $(thresholdSlider).change(function(){
+        $(thresholdSlider).change(function(e){
+
+            $("#threshold-val").text(e.value.newValue);
+            updateState();
             analyze_text();
         });
 
@@ -92,6 +103,22 @@
             select_mention_and_box(mention, boxToSelect, id);
         });
 
+        if(state.text && state.text !== "") {
+            $('#ambiverse-text-input').val(state.text);
+        }
+
+        if(state.language && state.language !== "") {
+            $('#settings-language').val(state.language);
+        }
+
+        if(state.confidenceThreshold && state.confidenceThreshold !== "") {
+            thresholdSlider.slider('setValue',parseFloat(state.confidenceThreshold));
+            $("#threshold-val").text(state.confidenceThreshold);
+        }
+
+        if(state.analyze && state.analyze === "true") {
+            analyze_text();
+        }
 
     });
 
@@ -130,13 +157,13 @@
         });
 
 
-        $("span.mention").mouseup(function(e){
+        $("span.mention").bind("mouseup touchend", function(e){
             var mention = $(this);
             e.stopPropagation();
-            $("span.mention").unbind('mouseup');
+            $("span.mention").unbind('mouseup touchend');
         });
 
-        $("#ambiverse-annotated-text:not(span.mention)").mousedown(function(){
+        $("#ambiverse-annotated-text:not(span.mention)").bind("mousedown touchstart", function(e){
 
             mentions.forEach(function(value, key){
                 $(value).removeClass("selected");
@@ -146,18 +173,18 @@
                 $(value).removeClass("selected");
             });
 
-            $("#ambiverse-annotated-text:not(span.mention)").mouseup(function(){
-                $("#ambiverse-annotated-text:not(span.mention)").unbind('mouseup');
+            $("#ambiverse-annotated-text:not(span.mention)").bind("mouseup touchend", function(e){
+                $("#ambiverse-annotated-text:not(span.mention)").unbind('mouseup touchend');
             });
         });
 
-        $("#ambiverse-result-entities .entity-box").mouseup(function(e){
+        $("#ambiverse-result-entities .entity-box").bind("mouseup touchend", function(e){
             var mention = $(this);
             e.stopPropagation();
-            $("#ambiverse-result-entities .entity-box").unbind('mouseup');
+            $("#ambiverse-result-entities .entity-box").unbind('mouseup touchend');
         });
 
-        $("#ambiverse-result-entities:not(.entity-box)").mousedown(function(){
+        $("#ambiverse-result-entities:not(.entity-box)").bind("mousedown touchstart", function(e){
 
             mentions.forEach(function(value, key){
                 $(value).removeClass("selected");
@@ -167,8 +194,8 @@
                 $(value).removeClass("selected");
             });
 
-            $("#ambiverse-result-entities:not(.entity-box)").mouseup(function(){
-                $("#ambiverse-result-entities:not(.entity-box)").unbind('mouseup');
+            $("#ambiverse-result-entities:not(.entity-box)").bind("mouseup touchend", function(e){
+                $("#ambiverse-result-entities:not(.entity-box)").unbind('mouseup touchend');
             });
         });
     }
@@ -401,17 +428,17 @@
         var viewArray = [];
         renderedEntities = [];
 
-        viewArray.push('<div class="row">');
+        viewArray.push('<ul class="flex-container">');
         entities.forEach(function (value, key, entities) {
 
             if(!renderedEntities.contains(value.id)) {
-                viewArray.push('<div class="col-md-4">');
+                viewArray.push('<li class="flex-item">');
                 viewArray.push(entity_box(value));
-                viewArray.push('</div>');
+                viewArray.push('</li>');
                 renderedEntities.push(value.id);
             }
         });
-        viewArray.push('<div class="row">');
+        viewArray.push('</div>');
 
         return viewArray.join('');
     }
@@ -434,12 +461,16 @@
         viewArray.push('<div class="pull-left media-left">');
         viewArray.push('<img class="media-object"');
         viewArray.push('src="');
-        viewArray.push(generate_thumbinail_image(entity.imageUrl, 60));
+        viewArray.push(generate_thumbinail_image(entity.imageUrl, 100));
         viewArray.push('" alt="');
         viewArray.push(entity.name);
         viewArray.push('" onerror = "this.src=\'');
         viewArray.push(unknownImage);
-        viewArray.push('\'">');
+        viewArray.push('\'"');
+        // if(generate_thumbinail_image(entity.imageUrl, 200)===unknownImage) {
+        //     viewArray.push(' style="width: 60px"');
+        // }
+        viewArray.push('>');
         viewArray.push('<div>&nbsp;</div>');
         if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
             //viewArray.push('</small>');
@@ -480,7 +511,7 @@
 
         viewArray.push('</div>');
         if(!('confidence' in entity)) {
-            viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
+            viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px; flex: 1 0 auto;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
         }
         viewArray.push('</div>');
         //viewArray.push('</div>');
@@ -533,7 +564,7 @@
 
 
 
-    function generate_thumbinail_image(imageUrl, widthInPixels=60) {
+    function generate_thumbinail_image(imageUrl, widthInPixels) {
         if(typeof imageUrl !=='undefined') {
             var insertIndex = -1;
             var thumbnailUrl = imageUrl;
@@ -606,5 +637,19 @@
 
         throw new Error("Unable to copy obj! Its type isn't supported.");
     }
+
+
+    var updateState = _.throttle(function() {
+        // clear then parameters first
+        state = {};
+
+        state['text'] = $('#ambiverse-text-input').val();
+        state['language'] = $("#settings-language").val();
+        state['confidenceThreshold'] = thresholdSlider.slider('getValue');
+        state['analyze'] = "true";
+
+        var st = $.param(state);
+        history.pushState(null, null, '?' + st+'#entity-linking-demo');
+    }, 500, true);
 
 })( jQuery );

@@ -20,13 +20,13 @@
 
 <!-- Tab panes -->
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="entities" style="padding: 10px;">
+    <div role="tabpanel" class="tab-pane active" id="entities">
         <div>&nbsp;</div>
         <?php do_action('ambiverse-eld-public-text-result'); ?>
 
         <?php do_action('ambiverse-eld-public-entities'); ?>
     </div>
-    <div role="tabpanel" class="tab-pane" id="json" style="padding: 10px;">
+    <div role="tabpanel" class="tab-pane" id="json" style="padding-top: 10px;">
         <?php do_action('ambiverse-eld-public-pills'); ?>
     </div>
 
