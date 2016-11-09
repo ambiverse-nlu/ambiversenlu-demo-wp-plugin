@@ -180,6 +180,13 @@ class Ambiverse_ELD_Admin
         );
 
         add_settings_section(
+            $this->plugin_name . '-settings-layout',
+            apply_filters($this->plugin_name . 'section-title-settings-layout', esc_html__('Layout', 'ambiverse-eld')),
+            array($this, 'section_layout'),
+            $this->plugin_name
+        );
+
+        add_settings_section(
             $this->plugin_name . '-usage',
             apply_filters($this->plugin_name . 'section-title-settings-disambiguation', esc_html__('Usage', 'ambiverse-eld')),
             array($this, 'section_usage'),
@@ -241,7 +248,7 @@ class Ambiverse_ELD_Admin
                 $defaults['description'] = '';
                 $defaults['label'] = '';
                 $defaults['name'] = $this->plugin_name . '-options[' . $value['id'] . ']';
-                $defaults['value'] = 0;
+                $defaults['value'] = '';
                 apply_filters($this->plugin_name . '-field-checkbox-options-defaults', $defaults);
                 $atts = wp_parse_args($value, $defaults);
                 if (!empty($this->options[$atts['id']])) {
@@ -255,7 +262,7 @@ class Ambiverse_ELD_Admin
             $defaults['description'] = '';
             $defaults['label'] = '';
             $defaults['name'] = $this->plugin_name . '-options[' . $args['id'] . ']';
-            $defaults['value'] = 0;
+            $defaults['value'] = '';
             apply_filters($this->plugin_name . '-field-checkbox-options-defaults', $defaults);
             $atts = wp_parse_args($args, $defaults);
             if (!empty($this->options[$atts['id']])) {
@@ -265,6 +272,53 @@ class Ambiverse_ELD_Admin
         }
 
     } // field_checkbox()
+
+
+    /**
+     * Creates a checkbox field
+     *
+     * @param 	array 		$args 			The arguments for the field
+     * @return 	string 						The HTML field
+     */
+    public function field_image_radio_button( $args ) {
+
+        if(isset($args[0]) && is_array($args[0])) {
+            //Multiple check boxes for one label
+            foreach ($args as $value) {
+                $defaults['class'] = '';
+                $defaults['description'] = '';
+                $defaults['label'] = '';
+                $defaults['img'] = '';
+                $defaults['name'] = '';
+                $defaults['value'] = 0;
+                apply_filters($this->plugin_name . '-field-image-radio-options-defaults', $defaults);
+                $atts = wp_parse_args($value, $defaults);
+                $atts['name'] = $this->plugin_name . '-options['.$atts['name'].']';
+
+                if (!empty($this->options[$value['name']])) {
+                    $atts['selected'] = $this->options[$value['name']];
+                }
+                include( plugin_dir_path( __FILE__ ) . 'partials/' . $this->plugin_name . '-admin-field-image-button.php' );
+            }
+        } else {
+
+            $defaults['class'] = '';
+            $defaults['description'] = '';
+            $defaults['label'] = '';
+            $defaults['img'] = '';
+            $defaults['name'] = '';
+            $defaults['value'] = 0;
+            apply_filters($this->plugin_name . '-field-image-radio-options-defaults', $defaults);
+            $atts = wp_parse_args($args, $defaults);
+            $atts['name'] = $this->plugin_name . '-options['.$atts['name'].']';
+
+            if (!empty($this->options[$atts['name']])) {
+                $atts['value'] = $this->options[$atts['name']];
+            }
+            include( plugin_dir_path( __FILE__ ) . 'partials/' . $this->plugin_name . '-admin-field-image-button.php' );
+        }
+
+    } // field_image_radio_button()
 
     /**
      * Creates a range slider field
@@ -414,9 +468,9 @@ class Ambiverse_ELD_Admin
             $this->plugin_name . '-settings-disambiguation',
             array(
                 0 => array(
-                'description' 	=> 'English',
-                'id' 			=> 'settings-language-en',
-                'value' 		=> 'en'
+                    'description' 	=> 'English',
+                    'id' 			=> 'settings-language-en',
+                    'value' 		=> 'en'
                 ),
                 1 => array(
                     'description' 	=> 'German',
@@ -468,6 +522,28 @@ class Ambiverse_ELD_Admin
 
             )
         );
+
+        add_settings_field(
+            'ambiverse-settings-entity-layout',
+            apply_filters( $this->plugin_name . 'label-settings-entity-layout', esc_html__( 'Layout of the entity boxes', 'ambiverse-eld' ) ),
+            array( $this, 'field_image_radio_button' ),
+            $this->plugin_name,
+            $this->plugin_name . '-settings-layout',
+            array(
+                0 => array(
+                    'img' 	=>  plugin_dir_url( __FILE__ )  .'images/entity-layout-1.png',
+                    'id' 			=> 'settings-layout-1',
+                    'value' 		=> 'layout1',
+                    'name'          =>  'entity-layout'
+                ),
+                1 => array(
+                    'img' 	=> plugin_dir_url( __FILE__ )  .'images/entity-layout-2.png',
+                    'id' 			=> 'settings-layout-2',
+                    'value' 		=> 'layout2',
+                    'name'          => 'entity-layout'
+                )
+            )
+        );
     } // register_fields()
 
 
@@ -508,6 +584,19 @@ class Ambiverse_ELD_Admin
 
 
     /**
+     * Creates a settings section
+     *
+     * @since 		0.9
+     * @param 		array 		$params 		Array of parameters for the section
+     * @return 		mixed 						The settings section
+     */
+    public function section_layout( $params ) {
+
+
+        include( plugin_dir_path( __FILE__ ) . 'partials/ambiverse-eld-admin-section-layout.php' );
+    } // section_messages()
+
+    /**
      * Creates a usage section
      *
      * @since 		0.9
@@ -527,8 +616,7 @@ class Ambiverse_ELD_Admin
     } // section_messages()
 
     private function sanitizer( $type, $data ) {
-        echo "TyPE $type";
-        echo "<br />DATA $data";
+
         if ( empty( $type ) ) { return; }
         if ( empty( $data ) ) { return; }
         $return 	= '';
@@ -585,6 +673,7 @@ class Ambiverse_ELD_Admin
         $options[] = array( 'settings-api-version', 'v1beta2' );
         $options[] = array( 'settings-entity-linking-endpoint', '/entitylinking/' );
         $options[] = array( 'settings-knowledge-graph-endpoint', '/knowledgegraph/' );
+        $options[] = array( 'settings-entity-layout', 'layout1' );
         return $options;
     }
 }

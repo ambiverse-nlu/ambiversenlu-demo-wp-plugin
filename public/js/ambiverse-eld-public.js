@@ -51,7 +51,15 @@
     var state = $.deparam.querystring();
 
 
-    var unknownImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M-1-1h62v62H-1z%22%2F%3E%3Ctext%20transform%3D%22translate(19.543%2044.675)%22%20fill%3D%22%23ABABAB%22%20font-family%3D%22%27MyriadPro-Bold%27%22%20font-size%3D%2250%22%3E%3F%3C%2Ftext%3E%3C%2Fsvg%3E";
+    var unknownImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M98.17%20120.57l-.14-3.64c-.42-7.14%201.96-14.42%208.26-21.98%204.48-5.32%208.12-9.8%208.12-14.56%200-4.9-3.22-8.12-10.22-8.4-4.62%200-10.22%201.68-13.86%204.2l-4.76-15.26c5.04-2.94%2013.44-5.74%2023.38-5.74%2018.48%200%2026.88%2010.22%2026.88%2021.84%200%2010.64-6.58%2017.64-11.9%2023.52-5.18%205.74-7.28%2011.2-7.14%2017.5v2.52H98.17zm-3.64%2019.32c0-7.42%205.18-12.74%2012.46-12.74%207.56%200%2012.46%205.32%2012.6%2012.74%200%207.28-5.04%2012.74-12.6%2012.74-7.42%200-12.46-5.46-12.46-12.74z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultPersonImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M139.266%20161.434H80.733c-10.648%200-17.88-6.496-17.88-17.346%200-15.135%203.548-38.374%2023.17-38.374%202.077%200%2010.85%209.31%2023.977%209.31%2013.126%200%2021.9-9.31%2023.976-9.31%2019.622%200%2023.172%2023.24%2023.172%2038.374%200%2010.85-7.234%2017.346-17.882%2017.346zM110%20110c-14.198%200-25.717-11.52-25.717-25.717S95.803%2058.566%20110%2058.566s25.716%2011.52%2025.716%2025.717S124.196%20110%20110%20110z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultArtistImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cg%20fill%3D%22%23ABABAB%22%3E%3Cpath%20d%3D%22M137.467%20134.266c-6.38%209.36-13.82%2018.633-20.546%2025.583-2.353%202.43-4.563%204.526-6.61%206.27%2020.077-.384%2038.94-11.333%2028.56-29.648-.463-.76-.932-1.493-1.403-2.206zM92.735%20143.698c0-4.627%203.75-8.38%208.38-8.38.606%200%201.198.065%201.77.19%203.252-6.067%207.013-12.313%2011.017-18.27%203.117-4.634%206.008-8.524%208.697-11.708-.46-4.684-.126-10.258%201.325-17.243%207.333-35.263-52.708-59.96-70.304-2.98-10.893%2035.192%203.353%2061.588%2035.193%2076.67%201.088.508%202.215.965%203.37%201.375.296-3.352%201.533-7.734%203.702-13.11-1.918-1.534-3.15-3.894-3.15-6.544zm-28.412-40.804c0-4.63%203.752-8.38%208.38-8.38%204.627%200%208.38%203.75%208.38%208.38%200%204.626-3.752%208.38-8.38%208.38-4.628%200-8.38-3.754-8.38-8.38zm15.503%2032.425c-4.63%200-8.38-3.753-8.38-8.38%200-4.63%203.75-8.382%208.38-8.382%204.627%200%208.38%203.752%208.38%208.38%200%204.63-3.753%208.38-8.38%208.38zm6.92-61.334c0-5.897%204.78-10.678%2010.677-10.678%205.896%200%2010.675%204.78%2010.675%2010.678%200%205.896-4.78%2010.676-10.675%2010.676-5.898%200-10.678-4.782-10.678-10.676z%22%2F%3E%3Cpath%20d%3D%22M138.632%20105.292h-.003c-2.1-1.347-3.814-3.073-5.092-5.032-4.184%202.88-9.495%208.714-16.482%2019.104-14.3%2021.257-24.865%2045.57-19.907%2048.818.373.243.825.362%201.346.362%206.392%200%2023.292-17.764%2036.51-37.418%207.255-10.782%2010.634-18.02%2011.557-22.96-1.436-.2-2.927-.582-4.478-1.155-1.214-.45-2.376-1.028-3.453-1.718zM169.938%2070.972c-.275-1.265-1.42-2.153-2.713-2.102-10.35.386-18.62%202.4-24.584%205.983-6.78%204.077-8.87%209.107-9.43%2012.61-.428%202.678-.077%205.35.907%207.784%201.63%204.036%205%207.41%209.458%209.056%202.336.862%204.44%201.283%206.438%201.283.303%200%20.603-.012.9-.03%202.268-.15%204.427-.868%206.434-2.14%205.977-3.792%205.474-10.022%205.03-15.52-.552-6.84-.558-11.17%205.972-13.88%201.196-.498%201.865-1.78%201.588-3.044z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+    var defaultOrganizationImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M174.292%2075.71v8.573h-8.572c0%202.344-2.076%204.286-4.62%204.286H58.9c-2.544%200-4.62-1.943-4.62-4.287h-8.572V75.71L110%2049.995l64.292%2025.717zm0%2085.724v8.572H45.708v-8.572c0-2.344%202.076-4.286%204.62-4.286h119.343c2.546%200%204.622%201.942%204.622%204.286zm-94.295-68.58v51.435h8.572V92.854h17.144v51.434h8.572V92.854h17.145v51.434h8.573V92.854h17.145v51.434h3.95c2.546%200%204.622%201.94%204.622%204.285v4.286H54.28v-4.285c0-2.344%202.076-4.286%204.62-4.286h3.952V92.854h17.145z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultArtifactImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M69.282%20161.434h-4.286c-8.237%200-15.002-6.764-15.002-15.002v-55.72c0-8.237%206.765-15%2015.002-15h4.286v85.722zm75.007%200H75.71V75.71h8.573V64.997c0-3.55%202.88-6.43%206.43-6.43h38.575c3.55%200%206.43%202.88%206.43%206.43V75.71h8.57v85.724zM127.144%2075.71v-8.57h-34.29v8.57h34.29zm42.86%2070.722c0%208.238-6.763%2015.002-15%2015.002h-4.286V75.71h4.285c8.237%200%2015%206.765%2015%2015.003v55.72z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultEventImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M165.72%20161.434c0%204.688-3.884%208.572-8.572%208.572H62.853c-4.688%200-8.572-3.885-8.572-8.572V75.71c0-4.687%203.886-8.57%208.573-8.57h8.572v-6.43c0-5.894%204.822-10.716%2010.716-10.716h4.287c5.894%200%2010.715%204.822%2010.715%2010.715v6.43h25.717v-6.43c0-5.894%204.82-10.716%2010.715-10.716h4.286c5.895%200%2010.716%204.822%2010.716%2010.715v6.43h8.572c4.688%200%208.572%203.884%208.572%208.57v85.724zm-8.573%200v-68.58H62.853v68.58h94.294zM88.57%2060.71c0-1.206-.94-2.144-2.144-2.144H82.14c-1.206%200-2.144.938-2.144%202.143v19.287c0%201.205.938%202.144%202.144%202.144h4.286c1.205%200%202.143-.937%202.143-2.143V60.71zm18.685%2088.133c-.87.804-2.21.804-3.08%200l-19.29-19.287c-.802-.87-.802-2.21%200-3.014l3.082-3.08c.804-.805%202.144-.805%203.014%200l14.734%2014.732%2029.735-29.734c.87-.804%202.21-.804%203.013%200l3.08%203.08c.804.804.804%202.144%200%203.014l-34.288%2034.29zm32.748-88.134c0-1.206-.938-2.144-2.143-2.144h-4.286c-1.206%200-2.144.938-2.144%202.143v19.287c0%201.205.938%202.144%202.144%202.144h4.286c1.205%200%202.143-.937%202.143-2.143V60.71z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultLocationImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M142.08%20104.843l-24.378%2051.836c-1.406%202.945-4.487%204.754-7.702%204.754s-6.295-1.81-7.635-4.755L77.92%20104.842c-1.74-3.683-2.21-7.902-2.21-11.987%200-18.953%2015.338-34.29%2034.29-34.29%2018.953%200%2034.29%2015.337%2034.29%2034.29%200%204.084-.47%208.304-2.21%2011.987zM110%2075.71c-9.442%200-17.145%207.702-17.145%2017.146S100.558%20110%20110%20110c9.443%200%2017.145-7.7%2017.145-17.145S119.443%2075.71%20110%2075.71z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultOtherImage ="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M156.68%20132.033l-4.288%207.367c-2.344%204.085-7.635%205.49-11.72%203.147L122.86%20132.3v20.56c0%204.69-3.886%208.573-8.573%208.573h-8.572c-4.688%200-8.572-3.885-8.572-8.572V132.3L79.33%20142.548c-4.086%202.344-9.377.938-11.72-3.147l-4.287-7.367c-2.344-4.085-.938-9.376%203.147-11.72L84.283%20110%2066.47%2099.687c-4.086-2.344-5.492-7.635-3.148-11.72l4.286-7.367c2.344-4.085%207.635-5.49%2011.72-3.147L97.142%2087.7V67.14c0-4.69%203.884-8.573%208.572-8.573h8.572c4.688%200%208.572%203.885%208.572%208.572V87.7l17.814-10.247c4.084-2.344%209.375-.938%2011.72%203.147l4.286%207.367c2.344%204.085.938%209.376-3.148%2011.72L135.716%20110l17.814%2010.313c4.086%202.344%205.492%207.635%203.15%2011.72z%22%2F%3E%3C%2Fsvg%3E";
+
     $(function() {
 
         $('#ambiverse-text-input').autogrow({vertical: true, horizontal: false});
@@ -82,7 +90,6 @@
 
 
         $(thresholdSlider).change(function(e){
-
             $("#threshold-val").text(e.value.newValue);
             updateState();
             analyze_text();
@@ -103,8 +110,8 @@
             select_mention_and_box(mention, boxToSelect, id);
         });
 
-        if(state.text && state.text !== "") {
-            $('#ambiverse-text-input').val(state.text);
+        if(state.eldText && state.eldText !== "") {
+            $('#ambiverse-text-input').val(state.eldText);
         }
 
         if(state.language && state.language !== "") {
@@ -119,6 +126,8 @@
         if(state.analyze && state.analyze === "true") {
             analyze_text();
         }
+
+
 
     });
 
@@ -205,6 +214,7 @@
 
         var entityIds = [];
 
+
         entities.forEach(function(value, key, mentions) {
             if(!jQuery.isEmptyObject(value)) {
                 entityIds.push(value.id);
@@ -273,6 +283,8 @@
 
                 $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy));
                 $("#ambiverse-result-entities").html(entity_view(allEntities));
+
+
             },
             error : function(xhr, textStatus, errorThrown) {
 
@@ -291,6 +303,8 @@
             complete: function() {
                 $("#ambiverse-result-entities-loader").isLoading("hide");
                 $("#ambiverse-json-meta-loader").isLoading("hide");
+
+                resizeListItems();
             }
         })
     }
@@ -315,8 +329,8 @@
                 _ajax_nonce: ajax_obj.nonce
             },
             success: function(data) {
-                //console.log(data);
 
+                //console.log(data);
                 if(typeof data["code"]!=='undefined' && data["code"]!==200) {
 
                     $("#ambiverse-annotated-text").removeClass("well");
@@ -406,7 +420,8 @@
                 annotatedArray.push("<span class='mention  "+ typeColors[type] +"'");
 
                 if(typeof entity !=='undefined' && 'id' in entity) {
-                    annotatedArray.push(" data-id='" + entity.id+"'");
+                    var entityId = entity.id.replace(/'/g, "&#039;");
+                    annotatedArray.push(" data-id='" + entityId+"'");
                 }
                 if(typeof entity !=='undefined' && 'confidence' in entity) {
                     annotatedArray.push("data-confidence='" + value["entity"].confidence +"'");
@@ -428,14 +443,24 @@
         var viewArray = [];
         renderedEntities = [];
 
-        viewArray.push('<ul class="flex-container">');
-        entities.forEach(function (value, key, entities) {
+        var entityLayout = $("#ambiverse-text-input").data("entity-layout");
 
+        viewArray.push('<ul class="flex-container">');
+
+        entities.forEach(function (value, key, entities) {
+            //console.log(value);
             if(!renderedEntities.contains(value.id)) {
-                viewArray.push('<li class="flex-item">');
-                viewArray.push(entity_box(value));
-                viewArray.push('</li>');
-                renderedEntities.push(value.id);
+                if(entityLayout ==="layout1") {
+                    viewArray.push('<li class="flex-item">');
+                    viewArray.push(entity_box1(value));
+                    viewArray.push('</li>');
+                    renderedEntities.push(value.id);
+                }else if(entityLayout ==="layout2") {
+                    viewArray.push('<li class="list__item">');
+                    viewArray.push(entity_box2(value));
+                    viewArray.push('</li>');
+                    renderedEntities.push(value.id);
+                }
             }
         });
         viewArray.push('</div>');
@@ -443,7 +468,7 @@
         return viewArray.join('');
     }
 
-    function entity_box(entity) {
+    function entity_box1(entity) {
         var type = determine_type(entity["categories"]);
         //console.log("entity="+entity.name+" type="+type+" color="+typeColors[type]);
 
@@ -493,8 +518,9 @@
         viewArray.push(entity.name);
         viewArray.push('</h4>')
         if(typeof entity.description !=='undefined' && entity.description.length > 120) {
-            //viewArray.push('<small>');
-            viewArray.push(entity.description.substring(0, 120));
+            //viewArray.push(entity.description.substring(0, 120));
+            var descArray = entity.description.split(" ",20);
+            viewArray.push(descArray.join(" "));
             viewArray.push(' ... ');
         }else {
             viewArray.push(entity.description);
@@ -515,6 +541,67 @@
         }
         viewArray.push('</div>');
         //viewArray.push('</div>');
+
+        return viewArray.join("");
+    }
+
+    function entity_box2(entity) {
+        var type = determine_type(entity["categories"]);
+        var errorImage = getDefaultImageByType(type);
+
+
+        var viewArray = [];
+
+        viewArray.push('<figure class="white-box entity-box '+typeColors[type]+' list__item__inner" data-id="'+entity.id+'">');
+        viewArray.push('<div class="ribbon '+typeColors[type]+'">'+type+'</div>');
+
+        viewArray.push('<div class="crop"><img src="'+generate_thumbinail_image(entity.imageUrl, 280, type)+'" alt="'+entity.name+'" onerror = "this.src=\''+errorImage+'\'"></div>');
+
+        viewArray.push('<figcaption>');
+        viewArray.push('<h3 class="media-heading">'+entity.name+'</h3>');
+
+        if(typeof entity.description !=='undefined') {
+            var descArray = entity.description.split(" ");
+
+            if (descArray.length > 15) {
+                //viewArray.push(entity.description.substring(0, 120));
+                descArray = entity.description.split(" ", 15);
+                viewArray.push(descArray.join(" "));
+                viewArray.push(' ... ');
+            } else {
+                viewArray.push(entity.description);
+            }
+        }
+
+        if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
+            //viewArray.push('</small>');
+            viewArray.push('<div>');
+            entity.links.forEach(function (value, key) {
+
+                if(value.source==='Wikipedia') {
+                    viewArray.push('<a href="');
+                    viewArray.push(value.url);
+                    viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
+                    viewArray.push('</a>');
+                }
+            });
+            viewArray.push('</div>');
+        }
+
+        if('confidence' in entity) {
+            viewArray.push('<div>&nbsp;</div>');
+            viewArray.push('<div>&nbsp;</div>');
+            viewArray.push('<div class="confidence"><strong>Confidence:</strong> '+parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2)+'</div>');
+        }
+
+        viewArray.push('</div>');
+        if(!('confidence' in entity)) {
+            viewArray.push('<div>&nbsp;</div>');
+
+            viewArray.push('<div class="unknown"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
+        }
+        viewArray.push('</figcaption>');
+        viewArray.push('</figure>');
 
         return viewArray.join("");
     }
@@ -564,7 +651,7 @@
 
 
 
-    function generate_thumbinail_image(imageUrl, widthInPixels) {
+    function generate_thumbinail_image(imageUrl, widthInPixels, type) {
         if(typeof imageUrl !=='undefined') {
             var insertIndex = -1;
             var thumbnailUrl = imageUrl;
@@ -589,11 +676,45 @@
                 thumbnailUrl += "/" + widthInPixels + "px-" + imageName;
             }
             return thumbnailUrl;
-        } else {
-            return unknownImage;
+        }else {
+           return getDefaultImageByType(type);
         }
     }
 
+
+    function getDefaultImageByType(type){
+        var errorImage = unknownImage;
+
+        if(typeof type !== 'undefined') {
+            switch(type) {
+                case "Artist":
+                    errorImage = defaultArtistImage;
+                    break;
+                case "Person":
+                    errorImage = defaultPersonImage;
+                    break;
+                case "Location":
+                    errorImage = defaultLocationImage;
+                    break;
+                case "Organization":
+                    errorImage = defaultOrganizationImage;
+                    break;
+                case "Artifact":
+                    errorImage = defaultArtifactImage;
+                    break;
+                case "Event":
+                    errorImage = defaultEventImage;
+                    break;
+                case "Unknown":
+                    errorImage = unknownImage;
+                    break;
+                default:
+                    errorImage = defaultOtherImage;
+                    break;
+            }
+        }
+        return errorImage;
+    }
 
     function nthIndex(str, pat, n){
         var L= str.length, i= -1;
@@ -639,11 +760,13 @@
     }
 
 
+
+
     var updateState = _.throttle(function() {
         // clear then parameters first
         state = {};
 
-        state['text'] = $('#ambiverse-text-input').val();
+        state['eldText'] = $('#ambiverse-text-input').val();
         state['language'] = $("#settings-language").val();
         state['confidenceThreshold'] = thresholdSlider.slider('getValue');
         state['analyze'] = "true";
@@ -651,5 +774,11 @@
         var st = $.param(state);
         history.pushState(null, null, '?' + st+'#entity-linking-demo');
     }, 500, true);
+
+    function resizeListItems() {
+        if($("#ambiverse-result-entities").width()<900) {
+            $("li.list__item").css("width","25%");
+        }
+    }
 
 })( jQuery );

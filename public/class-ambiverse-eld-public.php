@@ -191,7 +191,8 @@ class Ambiverse_ELD_Public {
         $defaults['max-length']             = 2000;
         $defaults['id']                     = "ambiverse-text-input";
         $defaults['name']                   = "ambiverse-text-input";
-
+        $defaults['entity-layout']          = $this->options['entity-layout'];
+        
 
         $languages = array();
         $supportedLanguages = array();

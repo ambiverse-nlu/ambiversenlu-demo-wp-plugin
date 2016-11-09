@@ -221,6 +221,13 @@
     font-size: 11pt;
     width: 90%;
 }
+
+.entity-box h3 {
+    color: #555;
+    font-weight: 600;
+
+}
+
 .entity-box img {
     width: 60px;
 }
@@ -302,6 +309,7 @@
     background-image: radial-gradient(transparent 30%, rgba(0, 0, 0, 0.2));
     border: 0 solid rgba(0,0,0,0.2);
     color: #fff;
+    z-index: 200;
 }
 
 .entity-box .ribbon:after {
@@ -397,11 +405,36 @@
 }
 
 
+@media screen and ( max-width: 1200px ) /* 800 */
+{
+    .list__item
+    {
+        width: 25% !important;; /* 3 items per row */
+    }
+
+    @supports ( display: -webkit-flex ) or ( display: -ms-flex ) or ( display: flex )
+    {
+        .list__item
+        {
+            width: 25% !important;;
+        }
+
+    }
+
+}
+
 @media screen and ( max-width: 992px ) /* 800 */
 {
     .flex-item
     {
         width: 50%; /* 2 items per row */
+    }
+    .list__item
+    {
+        width: 33.333% !important;; /* 3 items per row */
+    }
+    .list__item .crop {
+        max-height: 180px !important;
     }
     @supports ( display: -webkit-flex ) or ( display: -ms-flex ) or ( display: flex )
     {
@@ -409,7 +442,15 @@
         {
             width: 50%;
         }
+        .list__item
+        {
+            width: 33.333% !important;;
+        }
+        .list__item .crop {
+            max-height: 180px !important;
+        }
     }
+
 }
 
 @media screen and ( max-width: 640px ) /* 320 */
@@ -419,11 +460,144 @@
         width: 100%; /* 1 item per row */
         float: none;
     }
+    .list__item
+    {
+        width: 50% !important;; /* 2 items per row */
+    }
+
+    .list__item .crop {
+        max-height: 180px !important;
+    }
+
     @supports ( display: -webkit-flex ) or ( display: -ms-flex ) or ( display: flex )
     {
         .flex-item
         {
             width: 100%;
         }
+        .list__item
+        {
+            width: 50% !important;
+        }
+        .list__item img
+        {
+            max-width: none;
+            float: none;
+            margin-left: 0;
+        }
+        .list__item .crop {
+            max-height: 180px !important;
+        }
+
+
     }
+}
+
+@media screen and ( max-width: 400px ) /* 400 */
+{
+    .flex-item
+    {
+        width: 100%; /* 1 item per row */
+        float: none;
+    }
+    .list__item
+    {
+        width: 100% !important;; /* 2 items per row */
+    }
+
+    .list__item .crop {
+        max-height: 250px !important;
+        height: 250px !important;
+    }
+
+    @supports ( display: -webkit-flex ) or ( display: -ms-flex ) or ( display: flex )
+    {
+        .flex-item
+        {
+            width: 100%;
+        }
+        .list__item
+        {
+            width: 100% !important;
+        }
+        .list__item img
+        {
+            max-width: none;
+            float: none;
+            margin-left: 0;
+        }
+        .list__item .crop {
+            max-height: 250px !important;
+            height: 250px !important;
+        }
+
+
+    }
+}
+
+.list__item
+{
+    width: 20%;
+    float: left;
+    padding: 0.625rem; /* 10 */
+
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+}
+.list__item__inner
+{
+    width: 100%;
+    color: #474d51;
+    background-color: #fff;
+    overflow: hidden;
+
+    padding: 0 0 0 0 !important;
+
+    /*-webkit-box-shadow: 0 0.125rem 0.313rem rgba( 0, 0, 0, .2 ); !* 2 5 *!*/
+    /*box-shadow: 0 0.125rem 0.313rem rgba( 0, 0, 0, .2 ); !* 2 5 *!*/
+}
+.list__item .crop {
+    max-height: 200px;
+    height: 200px;
+    width: 100% !important;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    line-height: 80px;
+
+}
+
+.list__item .crop img
+{
+    position: relative;
+    display: inline-block;
+    min-width: 100% !important;
+    width: 100% !important;
+    -ms-interpolation-mode: bicubic;
+    vertical-align: middle !important;
+}
+.list__item figcaption
+{
+    padding: 1.25rem; /* 20 */
+}
+
+.list__item__inner .ribbon {
+    top: 12px;
+}
+
+.confidence {
+    position: absolute;
+    bottom: 40px;
+    margin-right: 30px;
+    flex: 1 0 auto;
+}
+
+.unknown {
+    /*position: absolute;*/
+    bottom: 40px;
+    margin-right: 30px;
+    flex: 1 0 auto;
+    min-height: 80px;
 }

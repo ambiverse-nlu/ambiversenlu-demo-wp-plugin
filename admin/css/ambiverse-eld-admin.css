@@ -2,3 +2,15 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+label.imagebutton > input{ /* HIDE RADIO */
+    visibility: hidden; /* Makes input not-clickable */
+    position: absolute; /* Remove input from document flow */
+}
+label.imagebutton > input + img{ /* IMAGE STYLES */
+    cursor:pointer;
+    border:2px solid transparent;
+}
+label.imagebutton > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
+    border:2px solid #f00;
+}

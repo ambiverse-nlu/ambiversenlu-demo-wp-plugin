@@ -157,7 +157,13 @@ class Ambiverse_API
             $access_token = $this->get_access_token();
             $this->add_to_header('Authorization', 'Bearer: '.$access_token);
             $this->add_to_header('Content-Type', 'application/json;');
-            $data = json_encode($data);
+            $newData = array();
+            //Removing encoded \
+            foreach($data as $k=>$v) {
+                $newData[$k] = str_replace("\\","", $v);
+            }
+            $data = json_encode($newData);
+
         } else {
             $this->add_to_header('Content-Type', 'application/x-www-form-urlencoded');
             $data = http_build_query($data);
@@ -172,9 +178,10 @@ class Ambiverse_API
             'headers' => $this->get_headers(),
         );
 
-        //echo json_encode($request_args);
-        //wp_die();
-
+//        if($endpoint == $this->knowledge_graph_endpoint) {
+//            echo json_encode($request_args);
+//            wp_die();
+//        }
 
         $url = $endpoint . $method;
         //$url = "http://localhost:8080/aida/analyze";

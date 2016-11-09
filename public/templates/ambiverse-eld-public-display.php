@@ -12,7 +12,6 @@
  */
 
 //do_action('ambiverse-eld-before-content');
-
 ?>
 <div class="ambiverse-eld-wrap" id="entity-linking-demo">
 <!--    <h2>--><?php //echo esc_html_e('Entity Linking Demo', 'ambiverse-eld'); ?><!--</h2>-->
