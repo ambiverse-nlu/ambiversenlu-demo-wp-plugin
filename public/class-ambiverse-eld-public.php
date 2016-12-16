@@ -128,20 +128,37 @@ class Ambiverse_ELD_Public {
         $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $this->options["settings-api-endpoint"]);
 
         if($_POST["language"] !="auto") {
-            $data = array(
-                "coherentDocument" => $_POST['coherentDocument'],
-                "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
-                "text" =>  str_replace('\\', '', $_POST['text']),//$_POST['text'],
-                "language" => $_POST["language"],
-                "annotatedMentions" => $_POST["annotatedMentions"],
-            );
+            if($_POST["annotatedMentions"]!="") {
+                $data = array(
+                    "coherentDocument" => $_POST['coherentDocument'],
+                    "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
+                    "text" => str_replace('\\', '', $_POST['text']),//$_POST['text'],
+                    "language" => $_POST["language"],
+                    "annotatedMentions" => $_POST["annotatedMentions"],
+                );
+            } else {
+                $data = array(
+                    "coherentDocument" => $_POST['coherentDocument'],
+                    "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
+                    "text" => str_replace('\\', '', $_POST['text']),//$_POST['text'],
+                    "language" => $_POST["language"],
+                );
+            }
         } else {
-            $data = array(
-                "coherentDocument" => $_POST['coherentDocument'],
-                "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
-                "text" =>  str_replace('\\', '', $_POST['text']),
-                "annotatedMentions" => $_POST["annotatedMentions"],
-            );
+            if($_POST["annotatedMentions"]!="") {
+                $data = array(
+                    "coherentDocument" => $_POST['coherentDocument'],
+                    "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
+                    "text" => str_replace('\\', '', $_POST['text']),
+                    "annotatedMentions" => $_POST["annotatedMentions"],
+                );
+            } else {
+                $data = array(
+                    "coherentDocument" => $_POST['coherentDocument'],
+                    "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
+                    "text" => str_replace('\\', '', $_POST['text']),
+                );
+            }
         }
 
         $response = $api->call_entity_linking('analyze', $data);

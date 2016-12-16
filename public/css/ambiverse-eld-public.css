@@ -502,12 +502,12 @@
     }
     .list__item
     {
-        width: 100% !important;; /* 2 items per row */
+        width: 50% !important;; /* 2 items per row */
     }
 
     .list__item .crop {
         max-height: 250px !important;
-        height: 250px !important;
+        height: 150px !important;
     }
 
     @supports ( display: -webkit-flex ) or ( display: -ms-flex ) or ( display: flex )
@@ -518,7 +518,7 @@
         }
         .list__item
         {
-            width: 100% !important;
+            width: 50% !important;
         }
         .list__item img
         {
@@ -528,7 +528,7 @@
         }
         .list__item .crop {
             max-height: 250px !important;
-            height: 250px !important;
+            height: 150px !important;
         }
 
 

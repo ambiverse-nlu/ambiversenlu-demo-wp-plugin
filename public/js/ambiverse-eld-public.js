@@ -367,6 +367,7 @@
             _ajax_nonce: ajax_obj.nonce
         };
 
+        console.log(data);
         $.ajax({
             type : "post",
             dataType : "json",
