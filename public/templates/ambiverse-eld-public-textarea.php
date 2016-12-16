@@ -20,5 +20,9 @@
     maxlength="<?php echo esc_attr($args['max-length']); ?>"
     data-coherent-document="<?php echo esc_attr($args['coherent-document']); ?>"
     data-confidence-threshold="<?php echo esc_attr($args['confidence-threshold']); ?>"
-    data-entity-layout="<?php echo esc_attr($args['entity-layout']); ?>"><?php
+    data-entity-layout="<?php echo esc_attr($args['entity-layout']); ?>"
+    data-entity-images="<?php echo esc_attr($args['entity-images']); ?>"
+    data-entity-icons="<?php echo esc_attr($args['entity-icons']); ?>"
+    data-entity-free-images="<?php echo esc_attr($args['entity-free-images']); ?>"
+    ><?php
     echo esc_textarea($args['text']); ?></textarea>

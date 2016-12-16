@@ -133,12 +133,14 @@ class Ambiverse_ELD_Public {
                 "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                 "text" =>  str_replace('\\', '', $_POST['text']),//$_POST['text'],
                 "language" => $_POST["language"],
+                "annotatedMentions" => $_POST["annotatedMentions"],
             );
         } else {
             $data = array(
                 "coherentDocument" => $_POST['coherentDocument'],
                 "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                 "text" =>  str_replace('\\', '', $_POST['text']),
+                "annotatedMentions" => $_POST["annotatedMentions"],
             );
         }
 
@@ -192,7 +194,9 @@ class Ambiverse_ELD_Public {
         $defaults['id']                     = "ambiverse-text-input";
         $defaults['name']                   = "ambiverse-text-input";
         $defaults['entity-layout']          = $this->options['entity-layout'];
-        
+        $defaults['entity-images']          = $this->options['settings-entity-images'];
+        $defaults['entity-icons']           = $this->options['settings-entity-icons'];
+        $defaults['entity-free-images']     = $this->options['settings-entity-free-images'];
 
         $languages = array();
         $supportedLanguages = array();

@@ -178,8 +178,8 @@ class Ambiverse_API
             'headers' => $this->get_headers(),
         );
 
-//        if($endpoint == $this->knowledge_graph_endpoint) {
-//            echo json_encode($request_args);
+//        if($endpoint == $this->entity_linking_endpoint) {
+//            echo json_encode($data);
 //            wp_die();
 //        }
 

@@ -100,6 +100,7 @@
             var mention = $(this);
             var boxToSelect = null;
             var id = $(this).data("id");
+
             select_mention_and_box(mention, boxToSelect, id);
         });
 
@@ -107,6 +108,7 @@
             var mention = null;
             var boxToSelect = $(this);
             var id = $(this).data("id");
+
             select_mention_and_box(mention, boxToSelect, id);
         });
 
@@ -126,8 +128,6 @@
         if(state.analyze && state.analyze === "true") {
             analyze_text();
         }
-
-
 
     });
 
@@ -157,13 +157,30 @@
             boxes.push(box);
         }
 
+        var topMention;
         mentions.forEach(function(value, key){
             $(value).addClass("selected");
-        });
 
+            if(typeof topMention === 'undefined' || topMention.offset().top > $(value).offset().top ) {
+                topMention = $(value);
+            }
+        });
+        if(typeof topMention !== 'undefined' && box !== null) {
+            scrollToElement(topMention);
+        }
+
+        var bottomBox;
         boxes.forEach(function(value, key){
             $(value).addClass("selected");
+
+            if(typeof bottomBox === 'undefined' || bottomBox.offset().top < $(value).offset().top ) {
+                bottomBox = $(value);
+            }
         });
+
+        if(typeof bottomBox !== 'undefined' && mention !== null) {
+            scrollToElement(bottomBox);
+        }
 
 
         $("span.mention").bind("mouseup touchend", function(e){
@@ -313,21 +330,48 @@
         var l = Ladda.create(  document.querySelector('.progress-button') );
 
         var textInput = $("#ambiverse-text-input");
+        var textInputString = $(textInput).val();
+
+        var annotatedMentions = [];
+        const regex = /\[\[(.*?)\]\]/g;
+        var m;
+
+        var mentionsFound = 0;
+        while ((m = regex.exec(textInputString)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+            var charOffset = m["index"]-mentionsFound*4;
+            var charLength = m[1].length;
+            annotatedMentions.push({
+                "charOffset":charOffset,
+                "charLength":charLength
+            });
+            mentionsFound++;
+        }
+
+        textInputString = textInputString.replaceAll("[[", "").replaceAll("]]", "");
+
         var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
         var confidenceThreshold = thresholdSlider.slider('getValue');
         var language = $("#settings-language").val();
+
+        var data = {
+            action: "tag_analyze_document",
+            annotatedMentions: annotatedMentions,
+            text : textInputString,
+            coherentDocument : coherentDocument,
+            confidenceThreshold : confidenceThreshold,
+            language : language,
+            _ajax_nonce: ajax_obj.nonce
+        };
+
         $.ajax({
             type : "post",
             dataType : "json",
             url : ajax_obj.ajax_url,
-            data : {
-                action: "tag_analyze_document",
-                text : $(textInput).val(),
-                coherentDocument : coherentDocument,
-                confidenceThreshold : confidenceThreshold,
-                language : language,
-                _ajax_nonce: ajax_obj.nonce
-            },
+            data : data,
             success: function(data) {
 
                 //console.log(data);
@@ -337,9 +381,7 @@
                     $("#ambiverse-annotated-text").addClass("alert alert-danger");
                     $("#ambiverse-annotated-text").html(data["message"]);
                 } else {
-                    text = $(textInput).val();
-                    text = text.replaceAll("[[", "");
-                    text = text.replaceAll("]]", "");
+                    text = textInputString;
 
                     var allEntities = [];
                     mentions = data["matches"];
@@ -448,7 +490,6 @@
         viewArray.push('<ul class="flex-container">');
 
         entities.forEach(function (value, key, entities) {
-            //console.log(value);
             if(!renderedEntities.contains(value.id)) {
                 if(entityLayout ==="layout1") {
                     viewArray.push('<li class="flex-item">');
@@ -470,32 +511,33 @@
 
     function entity_box1(entity) {
         var type = determine_type(entity["categories"]);
-        //console.log("entity="+entity.name+" type="+type+" color="+typeColors[type]);
+        var errorImage = getDefaultImageByType(type);
+
+        var includeImages  =  $("#ambiverse-text-input").data("entity-images");
+        var includeIcons   =  $("#ambiverse-text-input").data("entity-icons");
+        var onlyFreeImages =  $("#ambiverse-text-input").data("entity-free-images");
+
+        var entityThumbnail = generate_thumbinail_image(entity.imageUrl, 280, type);
+
+        if(onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
+            entityThumbnail = errorImage;
+        }
+
+        if(includeImages !== 1 && includeIcons === 1) {
+            entityThumbnail = errorImage;
+        }
+
 
         var viewArray = [];
-        viewArray.push('<div class="media white-box entity-box ');
-        viewArray.push(typeColors[type]);
-        viewArray.push('" data-id="');
-        viewArray.push(entity.id);
-        viewArray.push('">');
-        viewArray.push('<div class="ribbon ');
-        viewArray.push(typeColors[type]);
-        viewArray.push('">')
-        viewArray.push(type);
-        viewArray.push('</div>');
+        viewArray.push('<div class="media white-box entity-box '+typeColors+'" data-id="'+entity.id+'">');
+
+        viewArray.push('<div class="ribbon '+typeColors[type]+'">'+type+'</div>');
         viewArray.push('<div class="pull-left media-left">');
-        viewArray.push('<img class="media-object"');
-        viewArray.push('src="');
-        viewArray.push(generate_thumbinail_image(entity.imageUrl, 100));
-        viewArray.push('" alt="');
-        viewArray.push(entity.name);
-        viewArray.push('" onerror = "this.src=\'');
-        viewArray.push(unknownImage);
-        viewArray.push('\'"');
-        // if(generate_thumbinail_image(entity.imageUrl, 200)===unknownImage) {
-        //     viewArray.push(' style="width: 60px"');
-        // }
-        viewArray.push('>');
+        if(includeImages === 1 || includeIcons === 1) {
+            viewArray.push('<img class="media-object" src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"' + '>');
+        } else {
+            viewArray.push('<div>&nbsp;</div>');
+        }
         viewArray.push('<div>&nbsp;</div>');
         if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
             //viewArray.push('</small>');
@@ -503,10 +545,7 @@
             entity.links.forEach(function (value, key) {
 
                 if(value.source==='Wikipedia') {
-                    viewArray.push('<a href="');
-                    viewArray.push(value.url);
-                    viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
-                    viewArray.push('</a>');
+                    viewArray.push('<a href="'+value.url+'" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i></a>');
                 }
             });
             viewArray.push('</div>');
@@ -514,9 +553,8 @@
 
         viewArray.push('</div>');
         viewArray.push('<div class="media-body">');
-        viewArray.push('<h4 class="media-heading">');
-        viewArray.push(entity.name);
-        viewArray.push('</h4>')
+        viewArray.push('<h4 class="media-heading">'+entity.name+'</h4>');
+
         if(typeof entity.description !=='undefined' && entity.description.length > 120) {
             //viewArray.push(entity.description.substring(0, 120));
             var descArray = entity.description.split(" ",20);
@@ -525,8 +563,6 @@
         }else {
             viewArray.push(entity.description);
         }
-
-
 
         if('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
@@ -540,7 +576,6 @@
             viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px; flex: 1 0 auto;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
         }
         viewArray.push('</div>');
-        //viewArray.push('</div>');
 
         return viewArray.join("");
     }
@@ -549,14 +584,30 @@
         var type = determine_type(entity["categories"]);
         var errorImage = getDefaultImageByType(type);
 
+        var includeImages  =  $("#ambiverse-text-input").data("entity-images");
+        var includeIcons   =  $("#ambiverse-text-input").data("entity-icons");
+        var onlyFreeImages =  $("#ambiverse-text-input").data("entity-free-images");
+
+        var entityThumbnail = generate_thumbinail_image(entity.imageUrl, 280, type);
+
+        if(onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
+            entityThumbnail = errorImage;
+        }
+
+        if(includeImages !== 1 && includeIcons === 1) {
+            entityThumbnail = errorImage;
+        }
 
         var viewArray = [];
 
         viewArray.push('<figure class="white-box entity-box '+typeColors[type]+' list__item__inner" data-id="'+entity.id+'">');
         viewArray.push('<div class="ribbon '+typeColors[type]+'">'+type+'</div>');
 
-        viewArray.push('<div class="crop"><img src="'+generate_thumbinail_image(entity.imageUrl, 280, type)+'" alt="'+entity.name+'" onerror = "this.src=\''+errorImage+'\'"></div>');
-
+        if(includeImages === 1 || includeIcons === 1) {
+            viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"></div>');
+        } else {
+            viewArray.push('<div>&nbsp;</div>');
+        }
         viewArray.push('<figcaption>');
         viewArray.push('<h3 class="media-heading">'+entity.name+'</h3>');
 
@@ -614,7 +665,19 @@
             if (categories.contains("person")) {
                 return "Person";
             }
-            if (categories.contains("location")) {
+            if (categories.contains("yagoGeoEntity")
+                // categories.contains("location")
+                // || categories.contains("land")
+                // || categories.contains("_continent_")
+                // || categories.contains("_ocean_")
+                // || categories.contains("_sea_")
+                // || categories.contains("_river_")
+                // || categories.contains("_mountain_")
+                // || categories.contains("_lake_")
+                // || categories.contains("_strait_")
+                // || categories.contains("_canal_")
+                //TODO: Add all types that can be classified as location
+            ) {
                 return "Location";
             }
             if (categories.contains("organization")) {
@@ -679,6 +742,13 @@
         }else {
            return getDefaultImageByType(type);
         }
+    }
+
+    function isFreeImage(imageUrl) {
+        if(imageUrl.includes("/commons/")) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -760,6 +830,31 @@
     }
 
 
+    function scrollToElement(element){
+        //console.log("EOffset "+element.offset().top+" eld Offset "+$("#entity-linking-demo").offset().top+" eld scrollTop "+$("#entity-linking-demo").scrollTop());
+        //$('html,body').animate({scrollTop: element.offset().top - $("#entity-linking-demo").offset().top + $("#entity-linking-demo").scrollTop()}, 1000);
+        //return true;
+        var entityBoxHeight = $(".entity-box").height();
+
+        var offset = element.offset().top;
+        if(!element.is(":visible")) {
+            element.css({"visibility":"hidden"}).show();
+            var offset = element.offset().top;
+            element.css({"visibility":"", "display":""});
+        }
+
+        var visible_area_start = $(window).scrollTop();
+        var visible_area_end = visible_area_start + window.innerHeight;
+       // console.log("offset "+offset +" visible_area_start="+visible_area_start+" visible_area_end="+visible_area_end);
+
+        if(offset - entityBoxHeight < visible_area_start || offset + entityBoxHeight > visible_area_end){
+            // Not in view so scroll to it
+           // console.log("Scrolling to "+ (offset - window.innerHeight/3));
+            $('html,body').animate({scrollTop: offset - window.innerHeight/3}, 1000);
+            return false;
+        }
+        return true;
+    }
 
 
     var updateState = _.throttle(function() {

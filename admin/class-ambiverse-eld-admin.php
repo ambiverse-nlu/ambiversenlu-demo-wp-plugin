@@ -243,6 +243,7 @@ class Ambiverse_ELD_Admin
 
         if(isset($args[0]) && is_array($args[0])) {
             //Multiple check boxes for one label
+            //echo "EBI SEE";
             foreach ($args as $value) {
                 $defaults['class'] = '';
                 $defaults['description'] = '';
@@ -251,9 +252,12 @@ class Ambiverse_ELD_Admin
                 $defaults['value'] = '';
                 apply_filters($this->plugin_name . '-field-checkbox-options-defaults', $defaults);
                 $atts = wp_parse_args($value, $defaults);
+
                 if (!empty($this->options[$atts['id']])) {
+                   // echo "ID: ".$atts['id']." VALUE: ".$this->options[$atts['id']];
                     $atts['value'] = $this->options[$atts['id']];
                 }
+
                 include( plugin_dir_path( __FILE__ ) . 'partials/' . $this->plugin_name . '-admin-field-checkbox.php' );
             }
         } else {
@@ -265,9 +269,11 @@ class Ambiverse_ELD_Admin
             $defaults['value'] = '';
             apply_filters($this->plugin_name . '-field-checkbox-options-defaults', $defaults);
             $atts = wp_parse_args($args, $defaults);
+            //var_dump($this->options);
             if (!empty($this->options[$atts['id']])) {
                 $atts['value'] = $this->options[$atts['id']];
             }
+
             include( plugin_dir_path( __FILE__ ) . 'partials/' . $this->plugin_name . '-admin-field-checkbox.php' );
         }
 
@@ -492,7 +498,7 @@ class Ambiverse_ELD_Admin
 
         add_settings_field(
             'ambiverse-settings-coherent-settings',
-            apply_filters( $this->plugin_name . 'label-settings-language', esc_html__( 'Is document coherent?', 'ambiverse-eld' ) ),
+            apply_filters( $this->plugin_name . 'label-settings-coherent', esc_html__( 'Is document coherent?', 'ambiverse-eld' ) ),
             array( $this, 'field_checkbox' ),
             $this->plugin_name,
             $this->plugin_name . '-settings-disambiguation',
@@ -522,6 +528,34 @@ class Ambiverse_ELD_Admin
 
             )
         );
+
+
+        add_settings_field(
+            'ambiverse-settings-images',
+            apply_filters( $this->plugin_name . 'label-settings-images', esc_html__( 'Images:', 'ambiverse-eld' ) ),
+            array( $this, 'field_checkbox' ),
+            $this->plugin_name,
+            $this->plugin_name . '-settings-layout',
+            array(
+                0 => array(
+                    'description' 	=> 'Show images for entities',
+                    'id' 			=> 'settings-entity-images',
+                    'value' 		=> '0'
+                ),
+                1 => array(
+                    'description' 	=> 'Show icons for entities',
+                    'id' 			=> 'settings-entity-icons',
+                    'value' 		=> '0'
+                ),
+                2 => array(
+                    'description' 	=> 'Show only free images',
+                    'id' 			=> 'settings-entity-free-images',
+                    'value' 		=> '0'
+                ),
+
+            )
+        );
+
 
         add_settings_field(
             'ambiverse-settings-entity-layout',
@@ -650,12 +684,13 @@ class Ambiverse_ELD_Admin
 
         $opts 		= array();
         $options 	= $this->get_default_options();
-
+        //var_dump($options);
         foreach ( $options as $option ) {
             $opts[ $option[0] ] = $option[1];
         }
 
         $new_opts = wp_parse_args( $input, $opts);
+        //var_dump($new_opts);
         return $new_opts;
     } // validate_options()
 
@@ -674,6 +709,7 @@ class Ambiverse_ELD_Admin
         $options[] = array( 'settings-entity-linking-endpoint', '/entitylinking/' );
         $options[] = array( 'settings-knowledge-graph-endpoint', '/knowledgegraph/' );
         $options[] = array( 'settings-entity-layout', 'layout1' );
+
         return $options;
     }
 }
