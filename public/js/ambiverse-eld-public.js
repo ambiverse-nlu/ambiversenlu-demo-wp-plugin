@@ -1,4 +1,4 @@
-(function( $ ) {
+(function ($) {
     'use strict';
 
     /**
@@ -29,6 +29,8 @@
      * practising this, we should strive to set a better example in our own work.
      */
 
+
+
     var typeColors = {
         Person: "blue",
         Artist: "blue",
@@ -58,45 +60,46 @@
     var defaultArtifactImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M69.282%20161.434h-4.286c-8.237%200-15.002-6.764-15.002-15.002v-55.72c0-8.237%206.765-15%2015.002-15h4.286v85.722zm75.007%200H75.71V75.71h8.573V64.997c0-3.55%202.88-6.43%206.43-6.43h38.575c3.55%200%206.43%202.88%206.43%206.43V75.71h8.57v85.724zM127.144%2075.71v-8.57h-34.29v8.57h34.29zm42.86%2070.722c0%208.238-6.763%2015.002-15%2015.002h-4.286V75.71h4.285c8.237%200%2015%206.765%2015%2015.003v55.72z%22%2F%3E%3C%2Fsvg%3E";
     var defaultEventImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M165.72%20161.434c0%204.688-3.884%208.572-8.572%208.572H62.853c-4.688%200-8.572-3.885-8.572-8.572V75.71c0-4.687%203.886-8.57%208.573-8.57h8.572v-6.43c0-5.894%204.822-10.716%2010.716-10.716h4.287c5.894%200%2010.715%204.822%2010.715%2010.715v6.43h25.717v-6.43c0-5.894%204.82-10.716%2010.715-10.716h4.286c5.895%200%2010.716%204.822%2010.716%2010.715v6.43h8.572c4.688%200%208.572%203.884%208.572%208.57v85.724zm-8.573%200v-68.58H62.853v68.58h94.294zM88.57%2060.71c0-1.206-.94-2.144-2.144-2.144H82.14c-1.206%200-2.144.938-2.144%202.143v19.287c0%201.205.938%202.144%202.144%202.144h4.286c1.205%200%202.143-.937%202.143-2.143V60.71zm18.685%2088.133c-.87.804-2.21.804-3.08%200l-19.29-19.287c-.802-.87-.802-2.21%200-3.014l3.082-3.08c.804-.805%202.144-.805%203.014%200l14.734%2014.732%2029.735-29.734c.87-.804%202.21-.804%203.013%200l3.08%203.08c.804.804.804%202.144%200%203.014l-34.288%2034.29zm32.748-88.134c0-1.206-.938-2.144-2.143-2.144h-4.286c-1.206%200-2.144.938-2.144%202.143v19.287c0%201.205.938%202.144%202.144%202.144h4.286c1.205%200%202.143-.937%202.143-2.143V60.71z%22%2F%3E%3C%2Fsvg%3E";
     var defaultLocationImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M142.08%20104.843l-24.378%2051.836c-1.406%202.945-4.487%204.754-7.702%204.754s-6.295-1.81-7.635-4.755L77.92%20104.842c-1.74-3.683-2.21-7.902-2.21-11.987%200-18.953%2015.338-34.29%2034.29-34.29%2018.953%200%2034.29%2015.337%2034.29%2034.29%200%204.084-.47%208.304-2.21%2011.987zM110%2075.71c-9.442%200-17.145%207.702-17.145%2017.146S100.558%20110%20110%20110c9.443%200%2017.145-7.7%2017.145-17.145S119.443%2075.71%20110%2075.71z%22%2F%3E%3C%2Fsvg%3E";
-    var defaultOtherImage ="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M156.68%20132.033l-4.288%207.367c-2.344%204.085-7.635%205.49-11.72%203.147L122.86%20132.3v20.56c0%204.69-3.886%208.573-8.573%208.573h-8.572c-4.688%200-8.572-3.885-8.572-8.572V132.3L79.33%20142.548c-4.086%202.344-9.377.938-11.72-3.147l-4.287-7.367c-2.344-4.085-.938-9.376%203.147-11.72L84.283%20110%2066.47%2099.687c-4.086-2.344-5.492-7.635-3.148-11.72l4.286-7.367c2.344-4.085%207.635-5.49%2011.72-3.147L97.142%2087.7V67.14c0-4.69%203.884-8.573%208.572-8.573h8.572c4.688%200%208.572%203.885%208.572%208.572V87.7l17.814-10.247c4.084-2.344%209.375-.938%2011.72%203.147l4.286%207.367c2.344%204.085.938%209.376-3.148%2011.72L135.716%20110l17.814%2010.313c4.086%202.344%205.492%207.635%203.15%2011.72z%22%2F%3E%3C%2Fsvg%3E";
+    var defaultOtherImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M156.68%20132.033l-4.288%207.367c-2.344%204.085-7.635%205.49-11.72%203.147L122.86%20132.3v20.56c0%204.69-3.886%208.573-8.573%208.573h-8.572c-4.688%200-8.572-3.885-8.572-8.572V132.3L79.33%20142.548c-4.086%202.344-9.377.938-11.72-3.147l-4.287-7.367c-2.344-4.085-.938-9.376%203.147-11.72L84.283%20110%2066.47%2099.687c-4.086-2.344-5.492-7.635-3.148-11.72l4.286-7.367c2.344-4.085%207.635-5.49%2011.72-3.147L97.142%2087.7V67.14c0-4.69%203.884-8.573%208.572-8.573h8.572c4.688%200%208.572%203.885%208.572%208.572V87.7l17.814-10.247c4.084-2.344%209.375-.938%2011.72%203.147l4.286%207.367c2.344%204.085.938%209.376-3.148%2011.72L135.716%20110l17.814%2010.313c4.086%202.344%205.492%207.635%203.15%2011.72z%22%2F%3E%3C%2Fsvg%3E";
 
-    $(function() {
+    $(function () {
 
         $('#ambiverse-text-input').autogrow({vertical: true, horizontal: false});
 
-        $('#ambiverse-text-input').bind('input propertychange change keyup', function() {
+        $('#ambiverse-text-input').bind('input propertychange change keyup', function () {
             updateState();
         });
 
 
         $("#analyze").click(function () {
+
             analyze_text();
 
             //Log the event in Google Analytics
             ga('send', 'event', 'Buttons', 'clicked', 'Analyze Button');
         });
 
-        $("#settings-language").change(function() {
+        $("#settings-language").change(function () {
             updateState();
             analyze_text();
         });
 
         // With JQuery
-        thresholdSlider =  $('#settings-threshold').slider({
-            formatter: function(value) {
+        thresholdSlider = $('#settings-threshold').slider({
+            formatter: function (value) {
                 return 'Current value: ' + value;
             }
         });
 
 
-        $(thresholdSlider).change(function(e){
+        $(thresholdSlider).change(function (e) {
             $("#threshold-val").text(e.value.newValue);
             updateState();
             analyze_text();
         });
 
 
-        $(document).on('mousedown', 'span.mention', function(e){
+        $(document).on('mousedown', 'span.mention', function (e) {
             var mention = $(this);
             var boxToSelect = null;
             var id = $(this).data("id");
@@ -104,7 +107,7 @@
             select_mention_and_box(mention, boxToSelect, id);
         });
 
-        $(document).on('mousedown', '.entity-box', function(e){
+        $(document).on('mousedown', '.entity-box', function (e) {
             var mention = null;
             var boxToSelect = $(this);
             var id = $(this).data("id");
@@ -112,30 +115,30 @@
             select_mention_and_box(mention, boxToSelect, id);
         });
 
-        if(state.eldText && state.eldText !== "") {
+        if (state.eldText && state.eldText !== "") {
             $('#ambiverse-text-input').val(state.eldText);
         }
 
-        if(state.language && state.language !== "") {
+        if (state.language && state.language !== "") {
             $('#settings-language').val(state.language);
         }
 
-        if(state.confidenceThreshold && state.confidenceThreshold !== "") {
-            thresholdSlider.slider('setValue',parseFloat(state.confidenceThreshold));
+        if (state.confidenceThreshold && state.confidenceThreshold !== "") {
+            thresholdSlider.slider('setValue', parseFloat(state.confidenceThreshold));
             $("#threshold-val").text(state.confidenceThreshold);
         }
 
-        if(state.analyze && state.analyze === "true") {
+        if (state.analyze && state.analyze === "true") {
             analyze_text();
         }
 
     });
 
-    function select_mention_and_box( mention, box, id ) {
+    function select_mention_and_box(mention, box, id) {
 
         var mentions = [];
         var boxes = [];
-        if(mention === null) {
+        if (mention === null) {
             $("#ambiverse-annotated-text span.mention").each(function () {
                 var idTmp = $(this).data("id");
                 if (idTmp === id) {
@@ -146,7 +149,7 @@
             mentions.push(mention);
         }
 
-        if(box=== null) {
+        if (box === null) {
             $("#ambiverse-result-entities .entity-box").each(function () {
                 var idTmp = $(this).data("id");
                 if (idTmp === id) {
@@ -158,69 +161,69 @@
         }
 
         var topMention;
-        mentions.forEach(function(value, key){
+        mentions.forEach(function (value, key) {
             $(value).addClass("selected");
 
-            if(typeof topMention === 'undefined' || topMention.offset().top > $(value).offset().top ) {
+            if (typeof topMention === 'undefined' || topMention.offset().top > $(value).offset().top) {
                 topMention = $(value);
             }
         });
-        if(typeof topMention !== 'undefined' && box !== null) {
+        if (typeof topMention !== 'undefined' && box !== null) {
             scrollToElement(topMention);
         }
 
         var bottomBox;
-        boxes.forEach(function(value, key){
+        boxes.forEach(function (value, key) {
             $(value).addClass("selected");
 
-            if(typeof bottomBox === 'undefined' || bottomBox.offset().top < $(value).offset().top ) {
+            if (typeof bottomBox === 'undefined' || bottomBox.offset().top < $(value).offset().top) {
                 bottomBox = $(value);
             }
         });
 
-        if(typeof bottomBox !== 'undefined' && mention !== null) {
+        if (typeof bottomBox !== 'undefined' && mention !== null) {
             scrollToElement(bottomBox);
         }
 
 
-        $("span.mention").bind("mouseup touchend", function(e){
+        $("span.mention").bind("mouseup touchend", function (e) {
             var mention = $(this);
             e.stopPropagation();
             $("span.mention").unbind('mouseup touchend');
         });
 
-        $("#ambiverse-annotated-text:not(span.mention)").bind("mousedown touchstart", function(e){
+        $("#ambiverse-annotated-text:not(span.mention)").bind("mousedown touchstart", function (e) {
 
-            mentions.forEach(function(value, key){
+            mentions.forEach(function (value, key) {
                 $(value).removeClass("selected");
             });
 
-            boxes.forEach(function(value, key){
+            boxes.forEach(function (value, key) {
                 $(value).removeClass("selected");
             });
 
-            $("#ambiverse-annotated-text:not(span.mention)").bind("mouseup touchend", function(e){
+            $("#ambiverse-annotated-text:not(span.mention)").bind("mouseup touchend", function (e) {
                 $("#ambiverse-annotated-text:not(span.mention)").unbind('mouseup touchend');
             });
         });
 
-        $("#ambiverse-result-entities .entity-box").bind("mouseup touchend", function(e){
+        $("#ambiverse-result-entities .entity-box").bind("mouseup touchend", function (e) {
             var mention = $(this);
             e.stopPropagation();
             $("#ambiverse-result-entities .entity-box").unbind('mouseup touchend');
         });
 
-        $("#ambiverse-result-entities:not(.entity-box)").bind("mousedown touchstart", function(e){
+        $("#ambiverse-result-entities:not(.entity-box)").bind("mousedown touchstart", function (e) {
 
-            mentions.forEach(function(value, key){
+            mentions.forEach(function (value, key) {
                 $(value).removeClass("selected");
             });
 
-            boxes.forEach(function(value, key){
+            boxes.forEach(function (value, key) {
                 $(value).removeClass("selected");
             });
 
-            $("#ambiverse-result-entities:not(.entity-box)").bind("mouseup touchend", function(e){
+            $("#ambiverse-result-entities:not(.entity-box)").bind("mouseup touchend", function (e) {
                 $("#ambiverse-result-entities:not(.entity-box)").unbind('mouseup touchend');
             });
         });
@@ -232,30 +235,31 @@
         var entityIds = [];
 
 
-        entities.forEach(function(value, key, mentions) {
-            if(!jQuery.isEmptyObject(value)) {
+        entities.forEach(function (value, key, mentions) {
+            if (!jQuery.isEmptyObject(value)) {
                 entityIds.push(value.id);
             }
         });
 
         //console.log(entityIds);
         $.ajax({
-            type : "post",
-            dataType : "json",
-            url : ajax_obj.ajax_url,
-            data : {
+            type: "post",
+            dataType: "json",
+            url: ajax_obj.ajax_url,
+            data: {
                 action: "tag_entity_metadata",
-                entities : entityIds,
+                entities: entityIds,
                 _ajax_nonce: ajax_obj.nonce
             },
-            success: function(data) {
+            success: function (data) {
                 //console.log(data);
+
                 $("#ambiverse-json-output-meta code").text(JSON.stringify(data, null, 2));
-                $('#ambiverse-json-output-meta code').each(function(i, block) {
+                $('#ambiverse-json-output-meta code').each(function (i, block) {
                     hljs.highlightBlock(block);
                 });
 
-                if(typeof data !=='undefined' && data !== null) {
+                if (typeof data !== 'undefined' && data !== null) {
                     var entitiesTmp = data["entities"];
                     if (typeof entitiesTmp !== 'undefined' && entitiesTmp !== 'null' && entitiesTmp.length > 0) {
                         //hash the entity metadata
@@ -270,31 +274,31 @@
 
                 var mentionsCopy = clone(mentions);
                 mentionsCopy.forEach(function (mention, key) {
-                   if(!jQuery.isEmptyObject(mention["entity"])) {
+                    if (!jQuery.isEmptyObject(mention["entity"])) {
 
-                       var confidence = mention["entity"].confidence;
+                        var confidence = mention["entity"].confidence;
 
-                       if(typeof entityMetadata[mention["entity"].id] !== 'undefined') {
-                           mention["entity"] = entityMetadata[mention["entity"].id];
-                       }
-                       if(mention["entity"].id in entitiesWithconfidences) {
-                           confidence = Math.max(confidence, entitiesWithconfidences[mention["entity"].id]);
-                       }
+                        if (typeof entityMetadata[mention["entity"].id] !== 'undefined') {
+                            mention["entity"] = entityMetadata[mention["entity"].id];
+                        }
+                        if (mention["entity"].id in entitiesWithconfidences) {
+                            confidence = Math.max(confidence, entitiesWithconfidences[mention["entity"].id]);
+                        }
 
-                       mention["entity"]["confidence"] = confidence;
-                       entitiesWithconfidences[mention["entity"].id] = confidence;
-                       allEntities.push(entityMetadata[mention["entity"].id]);
+                        mention["entity"]["confidence"] = confidence;
+                        entitiesWithconfidences[mention["entity"].id] = confidence;
+                        allEntities.push(entityMetadata[mention["entity"].id]);
 
 
-                   } else {
+                    } else {
 
-                       var entity = {};
-                       entity["id"] = mention["text"];
-                       //entity["confidence"] = 0;
-                       entity["name"] = mention.text;
-                       mention["entity"] = entity;
-                       allEntities.push(entity);
-                   }
+                        var entity = {};
+                        entity["id"] = mention["text"];
+                        //entity["confidence"] = 0;
+                        entity["name"] = mention.text;
+                        mention["entity"] = entity;
+                        allEntities.push(entity);
+                    }
 
                 });
 
@@ -303,21 +307,21 @@
 
 
             },
-            error : function(xhr, textStatus, errorThrown) {
+            error: function (xhr, textStatus, errorThrown) {
 
             },
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#ambiverse-json-output-meta code").text("");
-                 $("#ambiverse-result-entities-loader").isLoading({
-                     text: "Loading Entity Metadata ...",
-                     position: "inside"
-                 });
+                $("#ambiverse-result-entities-loader").isLoading({
+                    text: "Loading Entity Metadata ...",
+                    position: "inside"
+                });
                 $("#ambiverse-json-meta-loader").isLoading({
                     text: "Loading Entity Metadata JSON ...",
                     position: "inside"
                 });
             },
-            complete: function() {
+            complete: function () {
                 $("#ambiverse-result-entities-loader").isLoading("hide");
                 $("#ambiverse-json-meta-loader").isLoading("hide");
 
@@ -327,7 +331,7 @@
     }
 
     function analyze_text() {
-        var l = Ladda.create(  document.querySelector('.progress-button') );
+        var l = Ladda.create(document.querySelector('.progress-button'));
 
         var textInput = $("#ambiverse-text-input");
         var textInputString = $(textInput).val();
@@ -342,11 +346,11 @@
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
-            var charOffset = m["index"]-mentionsFound*4;
+            var charOffset = m["index"] - mentionsFound * 4;
             var charLength = m[1].length;
             annotatedMentions.push({
-                "charOffset":charOffset,
-                "charLength":charLength
+                "charOffset": charOffset,
+                "charLength": charLength
             });
             mentionsFound++;
         }
@@ -360,27 +364,35 @@
         var data = {
             action: "tag_analyze_document",
             annotatedMentions: annotatedMentions,
-            text : textInputString,
-            coherentDocument : coherentDocument,
-            confidenceThreshold : confidenceThreshold,
-            language : language,
+            text: textInputString,
+            coherentDocument: coherentDocument,
+            confidenceThreshold: confidenceThreshold,
+            language: language,
             _ajax_nonce: ajax_obj.nonce
         };
 
-        console.log(data);
+        //console.log(data);
         $.ajax({
-            type : "post",
-            dataType : "json",
-            url : ajax_obj.ajax_url,
-            data : data,
-            success: function(data) {
+            type: "post",
+            dataType: "json",
+            url: ajax_obj.ajax_url,
+            data: data,
+            success: function (data) {
 
                 //console.log(data);
-                if(typeof data["code"]!=='undefined' && data["code"]!==200) {
 
+                if (typeof data["code"] !== 'undefined' && data["code"] !== 200) {
                     $("#ambiverse-annotated-text").removeClass("well");
                     $("#ambiverse-annotated-text").addClass("alert alert-danger");
-                    $("#ambiverse-annotated-text").html(data["message"]);
+                    if(data["message"].startsWith("Language could not be detected.")) {
+                        $("#ambiverse-annotated-text").html("The input language could not be detected. Please try selecting it from the dropdown box.");
+                    }else {
+                        $("#ambiverse-annotated-text").html(data["message"]);
+                    }
+                    $("#ambiverse-json-output code").text(JSON.stringify(data, null, 2));
+                    $('#ambiverse-json-output code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
                 } else {
                     text = textInputString;
 
@@ -400,21 +412,27 @@
 
                     $("#ambiverse-annotated-text").html(annotate_text(mentions));
 
-                     //Get entity metadata for all entities in the text
-                     get_entity_metadata(allEntities);
+                    if (mentions.length === 0) {
+                        $("#ambiverse-result-entities").html("<div style='margin: 5px 5px 20px 5px;' class='alert alert-warning'>No matches found!</div>");
+                    } else {
+                        //Get entity metadata for all entities in the text
+                        get_entity_metadata(allEntities);
+                    }
+
                 }
             },
-            error : function(xhr, textStatus, errorThrown) {
+            error: function (xhr, textStatus, errorThrown) {
 
             },
-            beforeSend: function() {
-                if($("#ambiverse-annotated-text").hasClass("alert")) {
+            beforeSend: function () {
+                if ($("#ambiverse-annotated-text").hasClass("alert")) {
                     $("#ambiverse-annotated-text").removeClass("alert");
                     $("#ambiverse-annotated-text").removeClass("alert-danger");
                     $("#ambiverse-annotated-text").addClass("well");
                 }
 
                 $("#ambiverse-json-output code").text("");
+                $("#ambiverse-json-output-meta code").text("");
                 $("#ambiverse-annotated-text").html("");
                 $("#ambiverse-result-entities").html("");
 
@@ -432,7 +450,7 @@
                 });
 
             },
-            complete: function() {
+            complete: function () {
                 l.stop();
                 $("#ambiverse-annotated-text").isLoading("hide");
                 $("#ambiverse-json-linking-loader").isLoading("hide");
@@ -444,7 +462,7 @@
 
         var annotatedArray = [];
         var prevOffset = 0;
-        mentions.forEach(function(value, key, mentions) {
+        mentions.forEach(function (value, key, mentions) {
 
             var mentionText = value["text"];
             var charLength = value["charLength"];
@@ -453,28 +471,28 @@
             var entity = value["entity"];
 
 
-            var type =  "Unknown";
-            if(typeof entity !== 'undefined' && 'categories' in entity) {
+            var type = "Unknown";
+            if (typeof entity !== 'undefined' && 'categories' in entity) {
                 type = determine_type(entity["categories"]);
             }
 
             if (endIndex <= text.length) {
                 annotatedArray.push(text.substring(prevOffset, offset));
-                annotatedArray.push("<span class='mention  "+ typeColors[type] +"'");
+                annotatedArray.push("<span class='mention  " + typeColors[type] + "'");
 
-                if(typeof entity !=='undefined' && 'id' in entity) {
+                if (typeof entity !== 'undefined' && 'id' in entity) {
                     var entityId = entity.id.replace(/'/g, "&#039;");
-                    annotatedArray.push(" data-id='" + entityId+"'");
+                    annotatedArray.push(" data-id='" + entityId + "'");
                 }
-                if(typeof entity !=='undefined' && 'confidence' in entity) {
-                    annotatedArray.push("data-confidence='" + value["entity"].confidence +"'");
+                if (typeof entity !== 'undefined' && 'confidence' in entity) {
+                    annotatedArray.push("data-confidence='" + value["entity"].confidence + "'");
                 }
                 annotatedArray.push(">" + mentionText + "</span>");
                 prevOffset = endIndex;
             }
 
         });
-        if(prevOffset<=text.length) {
+        if (prevOffset <= text.length) {
             var endIndex = text.length;
             annotatedArray.push(text.substring(prevOffset, endIndex));
         }
@@ -491,13 +509,13 @@
         viewArray.push('<ul class="flex-container">');
 
         entities.forEach(function (value, key, entities) {
-            if(!renderedEntities.contains(value.id)) {
-                if(entityLayout ==="layout1") {
+            if (!renderedEntities.contains(value.id)) {
+                if (entityLayout === "layout1") {
                     viewArray.push('<li class="flex-item">');
                     viewArray.push(entity_box1(value));
                     viewArray.push('</li>');
                     renderedEntities.push(value.id);
-                }else if(entityLayout ==="layout2") {
+                } else if (entityLayout === "layout2") {
                     viewArray.push('<li class="list__item">');
                     viewArray.push(entity_box2(value));
                     viewArray.push('</li>');
@@ -514,39 +532,39 @@
         var type = determine_type(entity["categories"]);
         var errorImage = getDefaultImageByType(type);
 
-        var includeImages  =  $("#ambiverse-text-input").data("entity-images");
-        var includeIcons   =  $("#ambiverse-text-input").data("entity-icons");
-        var onlyFreeImages =  $("#ambiverse-text-input").data("entity-free-images");
+        var includeImages = $("#ambiverse-text-input").data("entity-images");
+        var includeIcons = $("#ambiverse-text-input").data("entity-icons");
+        var onlyFreeImages = $("#ambiverse-text-input").data("entity-free-images");
 
         var entityThumbnail = generate_thumbinail_image(entity.imageUrl, 280, type);
 
-        if(onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
+        if (onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
             entityThumbnail = errorImage;
         }
 
-        if(includeImages !== 1 && includeIcons === 1) {
+        if (includeImages !== 1 && includeIcons === 1) {
             entityThumbnail = errorImage;
         }
 
 
         var viewArray = [];
-        viewArray.push('<div class="media white-box entity-box '+typeColors+'" data-id="'+entity.id+'">');
+        viewArray.push('<div class="media white-box entity-box ' + typeColors + '" data-id="' + entity.id + '">');
 
-        viewArray.push('<div class="ribbon '+typeColors[type]+'">'+type+'</div>');
+        viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
         viewArray.push('<div class="pull-left media-left">');
-        if(includeImages === 1 || includeIcons === 1) {
+        if (includeImages === 1 || includeIcons === 1) {
             viewArray.push('<img class="media-object" src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"' + '>');
         } else {
             viewArray.push('<div>&nbsp;</div>');
         }
         viewArray.push('<div>&nbsp;</div>');
-        if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
+        if (typeof entity.links !== 'undefined' && entity.links.length > 0) {
             //viewArray.push('</small>');
             viewArray.push('<div>');
             entity.links.forEach(function (value, key) {
 
-                if(value.source==='Wikipedia') {
-                    viewArray.push('<a href="'+value.url+'" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i></a>');
+                if (value.source === 'Wikipedia') {
+                    viewArray.push('<a href="' + value.url + '" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i></a>');
                 }
             });
             viewArray.push('</div>');
@@ -554,18 +572,18 @@
 
         viewArray.push('</div>');
         viewArray.push('<div class="media-body">');
-        viewArray.push('<h4 class="media-heading">'+entity.name+'</h4>');
+        viewArray.push('<h4 class="media-heading">' + entity.name + '</h4>');
 
-        if(typeof entity.description !=='undefined' && entity.description.length > 120) {
+        if (typeof entity.description !== 'undefined' && entity.description.length > 120) {
             //viewArray.push(entity.description.substring(0, 120));
-            var descArray = entity.description.split(" ",20);
+            var descArray = entity.description.split(" ", 20);
             viewArray.push(descArray.join(" "));
             viewArray.push(' ... ');
-        }else {
+        } else {
             viewArray.push(entity.description);
         }
 
-        if('confidence' in entity) {
+        if ('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
             viewArray.push('<div><strong>Confidence:</strong> ');
             viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2));
@@ -573,7 +591,7 @@
         }
 
         viewArray.push('</div>');
-        if(!('confidence' in entity)) {
+        if (!('confidence' in entity)) {
             viewArray.push('<div style="position: absolute; bottom: 30px; margin-right: 30px; flex: 1 0 auto;"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
         }
         viewArray.push('</div>');
@@ -585,34 +603,34 @@
         var type = determine_type(entity["categories"]);
         var errorImage = getDefaultImageByType(type);
 
-        var includeImages  =  $("#ambiverse-text-input").data("entity-images");
-        var includeIcons   =  $("#ambiverse-text-input").data("entity-icons");
-        var onlyFreeImages =  $("#ambiverse-text-input").data("entity-free-images");
+        var includeImages = $("#ambiverse-text-input").data("entity-images");
+        var includeIcons = $("#ambiverse-text-input").data("entity-icons");
+        var onlyFreeImages = $("#ambiverse-text-input").data("entity-free-images");
 
         var entityThumbnail = generate_thumbinail_image(entity.imageUrl, 280, type);
 
-        if(onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
+        if (onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
             entityThumbnail = errorImage;
         }
 
-        if(includeImages !== 1 && includeIcons === 1) {
+        if (includeImages !== 1 && includeIcons === 1) {
             entityThumbnail = errorImage;
         }
 
         var viewArray = [];
 
-        viewArray.push('<figure class="white-box entity-box '+typeColors[type]+' list__item__inner" data-id="'+entity.id+'">');
-        viewArray.push('<div class="ribbon '+typeColors[type]+'">'+type+'</div>');
+        viewArray.push('<figure class="white-box entity-box ' + typeColors[type] + ' list__item__inner" data-id="' + entity.id + '">');
+        viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
 
-        if(includeImages === 1 || includeIcons === 1) {
+        if (includeImages === 1 || includeIcons === 1) {
             viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"></div>');
         } else {
             viewArray.push('<div>&nbsp;</div>');
         }
         viewArray.push('<figcaption>');
-        viewArray.push('<h3 class="media-heading">'+entity.name+'</h3>');
+        viewArray.push('<h3 class="media-heading">' + entity.name + '</h3>');
 
-        if(typeof entity.description !=='undefined') {
+        if (typeof entity.description !== 'undefined') {
             var descArray = entity.description.split(" ");
 
             if (descArray.length > 15) {
@@ -625,12 +643,12 @@
             }
         }
 
-        if(typeof entity.links !=='undefined' && entity.links.length > 0 ) {
+        if (typeof entity.links !== 'undefined' && entity.links.length > 0) {
             //viewArray.push('</small>');
             viewArray.push('<div>');
             entity.links.forEach(function (value, key) {
 
-                if(value.source==='Wikipedia') {
+                if (value.source === 'Wikipedia') {
                     viewArray.push('<a href="');
                     viewArray.push(value.url);
                     viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
@@ -640,14 +658,14 @@
             viewArray.push('</div>');
         }
 
-        if('confidence' in entity) {
+        if ('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
             viewArray.push('<div>&nbsp;</div>');
-            viewArray.push('<div class="confidence"><strong>Confidence:</strong> '+parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2)+'</div>');
+            viewArray.push('<div class="confidence"><strong>Confidence:</strong> ' + parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2) + '</div>');
         }
 
         viewArray.push('</div>');
-        if(!('confidence' in entity)) {
+        if (!('confidence' in entity)) {
             viewArray.push('<div>&nbsp;</div>');
 
             viewArray.push('<div class="unknown"><em><small>We recognize the name but do not find a corresponding entity  in our knowledge graph (or we are not confident enough that it is correct).</small></em></div>');
@@ -659,26 +677,14 @@
     }
 
     function determine_type(categories) {
-        if(typeof categories !== 'undefined') {
+        if (typeof categories !== 'undefined') {
             if (categories.contains("artist")) {
                 return "Artist";
             }
             if (categories.contains("person")) {
                 return "Person";
             }
-            if (categories.contains("yagoGeoEntity")
-                // categories.contains("location")
-                // || categories.contains("land")
-                // || categories.contains("_continent_")
-                // || categories.contains("_ocean_")
-                // || categories.contains("_sea_")
-                // || categories.contains("_river_")
-                // || categories.contains("_mountain_")
-                // || categories.contains("_lake_")
-                // || categories.contains("_strait_")
-                // || categories.contains("_canal_")
-                //TODO: Add all types that can be classified as location
-            ) {
+            if (categories.contains("yagoGeoEntity")) {
                 return "Location";
             }
             if (categories.contains("organization")) {
@@ -690,7 +696,7 @@
             if (categories.includes("event")) {
                 return "Event";
             }
-        }else {
+        } else {
             return "Unknown";
         }
         return "Other";
@@ -698,12 +704,12 @@
     }
 
 
-    String.prototype.replaceAll = function(search, replacement) {
+    String.prototype.replaceAll = function (search, replacement) {
         var target = this;
         return target.split(search).join(replacement);
     };
 
-    Array.prototype.contains = function ( needle ) {
+    Array.prototype.contains = function (needle) {
         var result = false;
         $(this).each(function (index, item) {
             if (item.includes(needle)) {
@@ -714,9 +720,8 @@
     };
 
 
-
     function generate_thumbinail_image(imageUrl, widthInPixels, type) {
-        if(typeof imageUrl !=='undefined') {
+        if (typeof imageUrl !== 'undefined') {
             var insertIndex = -1;
             var thumbnailUrl = imageUrl;
 
@@ -740,24 +745,24 @@
                 thumbnailUrl += "/" + widthInPixels + "px-" + imageName;
             }
             return thumbnailUrl;
-        }else {
-           return getDefaultImageByType(type);
+        } else {
+            return getDefaultImageByType(type);
         }
     }
 
     function isFreeImage(imageUrl) {
-        if(imageUrl.includes("/commons/")) {
+        if (imageUrl.includes("/commons/")) {
             return true;
         }
         return false;
     }
 
 
-    function getDefaultImageByType(type){
+    function getDefaultImageByType(type) {
         var errorImage = unknownImage;
 
-        if(typeof type !== 'undefined') {
-            switch(type) {
+        if (typeof type !== 'undefined') {
+            switch (type) {
                 case "Artist":
                     errorImage = defaultArtistImage;
                     break;
@@ -787,10 +792,10 @@
         return errorImage;
     }
 
-    function nthIndex(str, pat, n){
-        var L= str.length, i= -1;
-        while(n-- && i++<L){
-            i= str.indexOf(pat, i);
+    function nthIndex(str, pat, n) {
+        var L = str.length, i = -1;
+        while (n-- && i++ < L) {
+            i = str.indexOf(pat, i);
             if (i < 0) break;
         }
         return i;
@@ -831,34 +836,34 @@
     }
 
 
-    function scrollToElement(element){
+    function scrollToElement(element) {
         //console.log("EOffset "+element.offset().top+" eld Offset "+$("#entity-linking-demo").offset().top+" eld scrollTop "+$("#entity-linking-demo").scrollTop());
         //$('html,body').animate({scrollTop: element.offset().top - $("#entity-linking-demo").offset().top + $("#entity-linking-demo").scrollTop()}, 1000);
         //return true;
         var entityBoxHeight = $(".entity-box").height();
 
         var offset = element.offset().top;
-        if(!element.is(":visible")) {
-            element.css({"visibility":"hidden"}).show();
+        if (!element.is(":visible")) {
+            element.css({"visibility": "hidden"}).show();
             var offset = element.offset().top;
-            element.css({"visibility":"", "display":""});
+            element.css({"visibility": "", "display": ""});
         }
 
         var visible_area_start = $(window).scrollTop();
         var visible_area_end = visible_area_start + window.innerHeight;
-       // console.log("offset "+offset +" visible_area_start="+visible_area_start+" visible_area_end="+visible_area_end);
+        // console.log("offset "+offset +" visible_area_start="+visible_area_start+" visible_area_end="+visible_area_end);
 
-        if(offset - entityBoxHeight < visible_area_start || offset + entityBoxHeight > visible_area_end){
+        if (offset - entityBoxHeight < visible_area_start || offset + entityBoxHeight > visible_area_end) {
             // Not in view so scroll to it
-           // console.log("Scrolling to "+ (offset - window.innerHeight/3));
-            $('html,body').animate({scrollTop: offset - window.innerHeight/3}, 1000);
+            // console.log("Scrolling to "+ (offset - window.innerHeight/3));
+            $('html,body').animate({scrollTop: offset - window.innerHeight / 3}, 1000);
             return false;
         }
         return true;
     }
 
 
-    var updateState = _.throttle(function() {
+    var updateState = _.throttle(function () {
         // clear then parameters first
         state = {};
 
@@ -868,13 +873,13 @@
         state['analyze'] = "true";
 
         var st = $.param(state);
-        history.pushState(null, null, '?' + st+'#entity-linking-demo');
+        history.pushState(null, null, '?' + st + '#entity-linking-demo');
     }, 500, true);
 
     function resizeListItems() {
-        if($("#ambiverse-result-entities").width()<900) {
-            $("li.list__item").css("width","25%");
+        if ($("#ambiverse-result-entities").width() < 900) {
+            $("li.list__item").css("width", "25%");
         }
     }
 
-})( jQuery );
+})(jQuery);
