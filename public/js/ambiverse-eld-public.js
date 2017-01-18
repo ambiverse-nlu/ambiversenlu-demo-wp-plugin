@@ -357,6 +357,10 @@
 
         textInputString = textInputString.replaceAll("[[", "").replaceAll("]]", "");
 
+        if (textInputString.charAt(textInputString.length-1) !== '.') {
+            textInputString += ".";
+        }
+
         var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
         var confidenceThreshold = thresholdSlider.slider('getValue');
         var language = $("#settings-language").val();
