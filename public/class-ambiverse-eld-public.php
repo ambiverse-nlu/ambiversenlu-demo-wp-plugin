@@ -97,6 +97,7 @@ class Ambiverse_ELD_Public {
          * between the defined hooks and the functions defined in this
          * class.
          */
+        wp_enqueue_script( 'bootstrap-tooltip', plugin_dir_url( __FILE__ ) . 'js/bootstrap-tooltip.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'underscore-demo', plugin_dir_url( __FILE__ ) . 'js/underscore-min.js', array(), $this->version, false );
         wp_enqueue_script( 'ladda-spin-script', plugin_dir_url( __FILE__ ) . 'js/spin.min.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'ladda-script', plugin_dir_url( __FILE__ ) . 'js/ladda.min.js', array( 'jquery' ), $this->version, false );
@@ -105,6 +106,7 @@ class Ambiverse_ELD_Public {
         wp_enqueue_script( 'autogrow-script', plugin_dir_url( __FILE__ ) . 'js/jquery.ns-autogrow.min.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'bootstrap-slider-script', plugin_dir_url( __FILE__ ) . 'js/bootstrap-slider.js', array( 'jquery' ), $this->version, false );
         wp_enqueue_script( 'jquery-bbq', plugin_dir_url( __FILE__ ) . 'js/jquery.ba-bbq.min.js', array( 'jquery' ), $this->version, false );
+
 
         wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ambiverse-eld-public.js', array( 'jquery' ), $this->version, false );
 

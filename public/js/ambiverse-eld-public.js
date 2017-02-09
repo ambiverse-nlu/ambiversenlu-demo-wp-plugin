@@ -51,6 +51,7 @@
     var thresholdSlider;
 
     var state = $.deparam.querystring();
+    var requestInProgress = false;
 
 
     var unknownImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M98.17%20120.57l-.14-3.64c-.42-7.14%201.96-14.42%208.26-21.98%204.48-5.32%208.12-9.8%208.12-14.56%200-4.9-3.22-8.12-10.22-8.4-4.62%200-10.22%201.68-13.86%204.2l-4.76-15.26c5.04-2.94%2013.44-5.74%2023.38-5.74%2018.48%200%2026.88%2010.22%2026.88%2021.84%200%2010.64-6.58%2017.64-11.9%2023.52-5.18%205.74-7.28%2011.2-7.14%2017.5v2.52H98.17zm-3.64%2019.32c0-7.42%205.18-12.74%2012.46-12.74%207.56%200%2012.46%205.32%2012.6%2012.74%200%207.28-5.04%2012.74-12.6%2012.74-7.42%200-12.46-5.46-12.46-12.74z%22%2F%3E%3C%2Fsvg%3E";
@@ -62,7 +63,17 @@
     var defaultLocationImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M142.08%20104.843l-24.378%2051.836c-1.406%202.945-4.487%204.754-7.702%204.754s-6.295-1.81-7.635-4.755L77.92%20104.842c-1.74-3.683-2.21-7.902-2.21-11.987%200-18.953%2015.338-34.29%2034.29-34.29%2018.953%200%2034.29%2015.337%2034.29%2034.29%200%204.084-.47%208.304-2.21%2011.987zM110%2075.71c-9.442%200-17.145%207.702-17.145%2017.146S100.558%20110%20110%20110c9.443%200%2017.145-7.7%2017.145-17.145S119.443%2075.71%20110%2075.71z%22%2F%3E%3C%2Fsvg%3E";
     var defaultOtherImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M156.68%20132.033l-4.288%207.367c-2.344%204.085-7.635%205.49-11.72%203.147L122.86%20132.3v20.56c0%204.69-3.886%208.573-8.573%208.573h-8.572c-4.688%200-8.572-3.885-8.572-8.572V132.3L79.33%20142.548c-4.086%202.344-9.377.938-11.72-3.147l-4.287-7.367c-2.344-4.085-.938-9.376%203.147-11.72L84.283%20110%2066.47%2099.687c-4.086-2.344-5.492-7.635-3.148-11.72l4.286-7.367c2.344-4.085%207.635-5.49%2011.72-3.147L97.142%2087.7V67.14c0-4.69%203.884-8.573%208.572-8.573h8.572c4.688%200%208.572%203.885%208.572%208.572V87.7l17.814-10.247c4.084-2.344%209.375-.938%2011.72%203.147l4.286%207.367c2.344%204.085.938%209.376-3.148%2011.72L135.716%20110l17.814%2010.313c4.086%202.344%205.492%207.635%203.15%2011.72z%22%2F%3E%3C%2Fsvg%3E";
 
+    $(document).ready(function () {
+
+        $('body').tooltip({
+            selector: '[rel=tooltip]',
+            container: 'body',
+            html: 'true'
+        });
+    });
     $(function () {
+
+
 
         $('#ambiverse-text-input').autogrow({vertical: true, horizontal: false});
 
@@ -80,8 +91,8 @@
         });
 
         $("#settings-language").change(function () {
-            updateState();
-            analyze_text();
+                updateState();
+                delayRequest();
         });
 
         // With JQuery
@@ -93,11 +104,22 @@
 
 
         $(thresholdSlider).change(function (e) {
-            $("#threshold-val").text(e.value.newValue);
-            updateState();
-            analyze_text();
+            var val = e.value.newValue;
+                $("#threshold-val").text(val);
+                updateState();
+                delayRequest();
         });
 
+        var timer;
+        function delayRequest() {
+
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                if(requestInProgress === false) {
+                    analyze_text();
+                }
+            }, 500);
+        }
 
         $(document).on('mousedown', 'span.mention', function (e) {
             var mention = $(this);
@@ -131,6 +153,7 @@
         if (state.analyze && state.analyze === "true") {
             analyze_text();
         }
+
 
     });
 
@@ -337,7 +360,7 @@
         var textInputString = $(textInput).val();
 
         var annotatedMentions = [];
-        const regex = /\[\[(.*?)\]\]/g;
+        var regex = /\[\[(.*?)\]\]/g;
         var m;
 
         var mentionsFound = 0;
@@ -429,6 +452,7 @@
 
             },
             beforeSend: function () {
+                requestInProgress = true;
                 if ($("#ambiverse-annotated-text").hasClass("alert")) {
                     $("#ambiverse-annotated-text").removeClass("alert");
                     $("#ambiverse-annotated-text").removeClass("alert-danger");
@@ -455,6 +479,7 @@
 
             },
             complete: function () {
+                requestInProgress = false;
                 l.stop();
                 $("#ambiverse-annotated-text").isLoading("hide");
                 $("#ambiverse-json-linking-loader").isLoading("hide");
@@ -482,7 +507,7 @@
 
             if (endIndex <= text.length) {
                 annotatedArray.push(text.substring(prevOffset, offset));
-                annotatedArray.push("<span class='mention  " + typeColors[type] + "'");
+                annotatedArray.push("<span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
 
                 if (typeof entity !== 'undefined' && 'id' in entity) {
                     var entityId = entity.id.replace(/'/g, "&#039;");
@@ -513,7 +538,8 @@
         viewArray.push('<ul class="flex-container">');
 
         entities.forEach(function (value, key, entities) {
-            if (!renderedEntities.contains(value.id)) {
+
+            if(jQuery.inArray(value.id, renderedEntities) === -1 ) {
                 if (entityLayout === "layout1") {
                     viewArray.push('<li class="flex-item">');
                     viewArray.push(entity_box1(value));
@@ -623,7 +649,7 @@
 
         var viewArray = [];
 
-        viewArray.push('<figure class="white-box entity-box ' + typeColors[type] + ' list__item__inner" data-id="' + entity.id + '">');
+        viewArray.push('<figure class="white-box entity-box ' + typeColors[type] + ' list__item__inner" data-id="' + entity.id + '" rel="tooltip" data-toggle="tooltip" data-placement="top" title="Click here to see the entity mentioned in the text.">');
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
 
         if (includeImages === 1 || includeIcons === 1) {
@@ -697,7 +723,7 @@
             if (categories.contains("artifact")) {
                 return "Artifact";
             }
-            if (categories.includes("event")) {
+            if (categories.contains("event")) {
                 return "Event";
             }
         } else {
@@ -716,11 +742,17 @@
     Array.prototype.contains = function (needle) {
         var result = false;
         $(this).each(function (index, item) {
-            if (item.includes(needle)) {
+            if (item.indexOf(needle) > 0) {
                 result = true;
+
             }
         });
         return result;
+    };
+
+    String.prototype.endsWith = function(pattern) {
+        var d = this.length - pattern.length;
+        return d >= 0 && this.lastIndexOf(pattern) === d;
     };
 
 
@@ -729,9 +761,9 @@
             var insertIndex = -1;
             var thumbnailUrl = imageUrl;
 
-            if (imageUrl.includes("/commons")) {
+            if (imageUrl.indexOf("/commons") > 0) {
                 insertIndex = imageUrl.indexOf("/commons") + "/commons".length;
-            } else if (imageUrl.includes("/en")) {
+            } else if (imageUrl.indexOf("/en") > 0) {
                 insertIndex = imageUrl.indexOf("/en") + "/en".length;
             }
 
@@ -755,7 +787,7 @@
     }
 
     function isFreeImage(imageUrl) {
-        if (imageUrl.includes("/commons/")) {
+        if (imageUrl.contains("/commons/")) {
             return true;
         }
         return false;
