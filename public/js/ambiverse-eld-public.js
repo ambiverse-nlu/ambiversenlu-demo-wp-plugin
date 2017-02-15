@@ -378,7 +378,7 @@
             mentionsFound++;
         }
 
-        textInputString = textInputString.replaceAll("[[", "").replaceAll("]]", "");
+        textInputString = $.trim(textInputString.replaceAll("[[", "").replaceAll("]]", ""));
 
         if (textInputString.charAt(textInputString.length-1) !== '.') {
             textInputString += ".";
@@ -411,10 +411,14 @@
                 if (typeof data["code"] !== 'undefined' && data["code"] !== 200) {
                     $("#ambiverse-annotated-text").removeClass("well");
                     $("#ambiverse-annotated-text").addClass("alert alert-danger");
-                    if(data["message"].startsWith("Language could not be detected.")) {
+
+                    
+                    if(typeof data["message"] !== 'undefined' && data["message"] != null && data["message"].startsWith("Language could not be detected.")) {
                         $("#ambiverse-annotated-text").html("The input language could not be detected. Please try selecting it from the dropdown box.");
-                    }else {
+                    }else if (data["message"] != null) {
                         $("#ambiverse-annotated-text").html(data["message"]);
+                    }else {
+                        $("#ambiverse-annotated-text").html("An error has occurred. Please check your input!");
                     }
                     $("#ambiverse-json-output code").text(JSON.stringify(data, null, 2));
                     $('#ambiverse-json-output code').each(function (i, block) {
