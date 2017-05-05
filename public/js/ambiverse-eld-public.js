@@ -380,7 +380,7 @@
 
         textInputString = $.trim(textInputString.replaceAll("[[", "").replaceAll("]]", ""));
 
-        if (textInputString.charAt(textInputString.length-1) !== '.') {
+        if (textInputString.charAt(textInputString.length-1) !== '.' && textInputString.charAt(textInputString.length-1) !== '?' && textInputString.charAt(textInputString.length-1) !== '!') {
             textInputString += ".";
         }
 
