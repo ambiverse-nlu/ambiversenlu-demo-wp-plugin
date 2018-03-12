@@ -52,6 +52,7 @@
 
     var state = $.deparam.querystring();
     var requestInProgress = false;
+    var version = "v1";
 
 
     var unknownImage = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22220%22%20height%3D%22220%22%20viewBox%3D%220%200%20220%20220%22%3E%3Cpath%20fill%3D%22%23EEE%22%20d%3D%22M0%200h220v220H0z%22%2F%3E%3Cpath%20fill%3D%22%23ABABAB%22%20d%3D%22M98.17%20120.57l-.14-3.64c-.42-7.14%201.96-14.42%208.26-21.98%204.48-5.32%208.12-9.8%208.12-14.56%200-4.9-3.22-8.12-10.22-8.4-4.62%200-10.22%201.68-13.86%204.2l-4.76-15.26c5.04-2.94%2013.44-5.74%2023.38-5.74%2018.48%200%2026.88%2010.22%2026.88%2021.84%200%2010.64-6.58%2017.64-11.9%2023.52-5.18%205.74-7.28%2011.2-7.14%2017.5v2.52H98.17zm-3.64%2019.32c0-7.42%205.18-12.74%2012.46-12.74%207.56%200%2012.46%205.32%2012.6%2012.74%200%207.28-5.04%2012.74-12.6%2012.74-7.42%200-12.46-5.46-12.46-12.74z%22%2F%3E%3C%2Fsvg%3E";
@@ -253,7 +254,7 @@
     }
 
 
-    function get_entity_metadata(entities) {
+    function get_entity_metadata(entities, language) {
 
         var entityIds = [];
 
@@ -264,7 +265,7 @@
             }
         });
 
-        //console.log(entityIds);
+        //console.log(entities);
         $.ajax({
             type: "post",
             dataType: "json",
@@ -276,13 +277,13 @@
             },
             success: function (data) {
                 //console.log(data);
-
                 $("#ambiverse-json-output-meta code").text(JSON.stringify(data, null, 2));
                 $('#ambiverse-json-output-meta code').each(function (i, block) {
                     hljs.highlightBlock(block);
                 });
 
-                if (typeof data !== 'undefined' && data !== null) {
+
+                if (version === "v1" && typeof data !== 'undefined' && data !== null) {
                     var entitiesTmp = data["entities"];
                     if (typeof entitiesTmp !== 'undefined' && entitiesTmp !== 'null' && entitiesTmp.length > 0) {
                         //hash the entity metadata
@@ -291,6 +292,10 @@
                         });
                     }
                 }
+                if(version === "v2") {
+                    entityMetadata = data["entities"];
+                }
+
 
                 var allEntities = [];
                 var entitiesWithconfidences = {};
@@ -298,15 +303,25 @@
                 var mentionsCopy = clone(mentions);
                 mentionsCopy.forEach(function (mention, key) {
                     if (!jQuery.isEmptyObject(mention["entity"])) {
+                        var confidence = 0;
+                        if(version === "v1") {
+                            var confidence = mention["entity"].confidence;
 
-                        var confidence = mention["entity"].confidence;
+                            if (mention["entity"].id in entitiesWithconfidences) {
+                                confidence = Math.max(confidence, entitiesWithconfidences[mention["entity"].id]);
+                            }
+                        } else {
+                            entities.forEach(function(entity, key) {
+                                if(entity.id === mention["entity"].id) {
+                                    confidence = entity.salience;
+                                }
+                            });
+                        }
 
                         if (typeof entityMetadata[mention["entity"].id] !== 'undefined') {
                             mention["entity"] = entityMetadata[mention["entity"].id];
                         }
-                        if (mention["entity"].id in entitiesWithconfidences) {
-                            confidence = Math.max(confidence, entitiesWithconfidences[mention["entity"].id]);
-                        }
+
 
                         mention["entity"]["confidence"] = confidence;
                         entitiesWithconfidences[mention["entity"].id] = confidence;
@@ -317,16 +332,28 @@
 
                         var entity = {};
                         entity["id"] = mention["text"];
-                        //entity["confidence"] = 0;
-                        entity["name"] = mention.text;
-                        mention["entity"] = entity;
+                        entity["name"] = null;
+                        entity["names"] = {};
+                        entity["type"] = "UNKNOWN";
+                        if(version === "v1") {
+                            //entity["confidence"] = 0;
+                            entity["name"] = mention.text;
+                        } else {
+
+                            var nameByLanguage = {};
+                            nameByLanguage.language = language;
+                            nameByLanguage.value = mention.text;
+                            entity["names"][language] = nameByLanguage;
+                        }
                         allEntities.push(entity);
+                        mention["entity"] = entity;
                     }
 
                 });
 
+                 //console.log(allEntities);
                 $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy));
-                $("#ambiverse-result-entities").html(entity_view(allEntities));
+                $("#ambiverse-result-entities").html(entity_view(allEntities, language));
 
 
             },
@@ -358,6 +385,11 @@
 
         var textInput = $("#ambiverse-text-input");
         var textInputString = $(textInput).val();
+
+        //Hardcoding "Page" to be annotated manually
+        if(textInputString.startsWith("Page")) {
+            textInputString = "[[Page]]"+textInputString.substr(4);
+        }
 
         var annotatedMentions = [];
         var regex = /\[\[(.*?)\]\]/g;
@@ -407,6 +439,7 @@
             success: function (data) {
 
                 //console.log(data);
+                version = ajax_obj.version;
 
                 if (typeof data["code"] !== 'undefined' && data["code"] !== 200) {
                     $("#ambiverse-annotated-text").removeClass("well");
@@ -429,7 +462,13 @@
 
                     var allEntities = [];
                     mentions = data["matches"];
-                    if (typeof mentions !== 'undefined') {
+
+                    if(version === "v2") {
+                        allEntities = data["entities"];
+                    }
+                    var language = data["language"];
+
+                    if (version === "v1" && typeof mentions !== 'undefined') {
                         mentions.forEach(function (value, key, mentions) {
                             allEntities.push(value["entity"]);
                         });
@@ -447,7 +486,7 @@
                         $("#ambiverse-result-entities").html("<div style='margin: 5px 5px 20px 5px;' class='alert alert-warning'>No matches found!</div>");
                     } else {
                         //Get entity metadata for all entities in the text
-                        get_entity_metadata(allEntities);
+                        get_entity_metadata(allEntities, language);
                     }
 
                 }
@@ -506,7 +545,12 @@
 
             var type = "Unknown";
             if (typeof entity !== 'undefined' && 'categories' in entity) {
-                type = determine_type(entity["categories"]);
+
+                if(version == "v1") {
+                    type = determine_type(entity["categories"]);
+                } else {
+                    type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+                }
             }
 
             if (endIndex <= text.length) {
@@ -533,7 +577,7 @@
         return annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
     }
 
-    function entity_view(entities) {
+    function entity_view(entities, language) {
         var viewArray = [];
         renderedEntities = [];
 
@@ -541,17 +585,17 @@
 
         viewArray.push('<ul class="flex-container">');
 
-        entities.forEach(function (value, key, entities) {
 
+        entities.forEach(function (value, key, entities) {
             if(jQuery.inArray(value.id, renderedEntities) === -1 ) {
                 if (entityLayout === "layout1") {
                     viewArray.push('<li class="flex-item">');
-                    viewArray.push(entity_box1(value));
+                    viewArray.push(entity_box1(value, language));
                     viewArray.push('</li>');
                     renderedEntities.push(value.id);
                 } else if (entityLayout === "layout2") {
                     viewArray.push('<li class="list__item">');
-                    viewArray.push(entity_box2(value));
+                    viewArray.push(entity_box2(value, language));
                     viewArray.push('</li>');
                     renderedEntities.push(value.id);
                 }
@@ -562,8 +606,46 @@
         return viewArray.join('');
     }
 
-    function entity_box1(entity) {
-        var type = determine_type(entity["categories"]);
+     function getEntityMetaForLanguage(entity, language) {
+
+          var result = {};
+
+          if(typeof entity.names !== 'undefined' && typeof entity.names[language] !== 'undefined') {
+           result.name = entity.names[language].value;
+          } else if(typeof entity.names !== 'undefined' && typeof entity.names["en"] !== 'undefined') {
+            result.name = entity.names["en"].value;
+          }
+
+          if(typeof entity.descriptions !== 'undefined' && typeof entity.descriptions[language] !== 'undefined') {
+            result.shortDescription = entity.descriptions[language].value;
+          }
+
+          if(typeof entity.detailedDescriptions !== 'undefined' &&  typeof entity.detailedDescriptions[language] !== 'undefined') {
+            result.description = entity.detailedDescriptions[language].value;
+          }
+
+           if(typeof entity.links !== 'undefined' && typeof entity.links[language] !== 'undefined') {
+            result.link = entity.links[language].value
+           } else if(typeof entity.links !== 'undefined' && typeof entity.links["en"] !== 'undefined') {
+            result.link = entity.links["en"].value
+           }
+
+          return result;
+        }
+
+    function entity_box1(entity, language) {
+
+
+        var displayEntity = entity;
+        if(version === "v2") {
+            displayEntity = getEntityMetaForLanguage(entity, language);
+        }
+        var type;
+        if(version === "v1") {
+            type = determine_type(entity["categories"]);
+        } else {
+            type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+        }
         var errorImage = getDefaultImageByType(type);
 
         var includeImages = $("#ambiverse-text-input").data("entity-images");
@@ -587,15 +669,17 @@
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
         viewArray.push('<div class="pull-left media-left">');
         if (includeImages === 1 || includeIcons === 1) {
-            viewArray.push('<img class="media-object" src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"' + '>');
+            viewArray.push('<img class="media-object" src="' + entityThumbnail + '" alt="' + displayEntity.name + '" onerror = "this.src=\'' + errorImage + '\'"' + '>');
         } else {
             viewArray.push('<div>&nbsp;</div>');
         }
+
         viewArray.push('<div>&nbsp;</div>');
-        if (typeof entity.links !== 'undefined' && entity.links.length > 0) {
+        if(version === "v1") {
+        if (typeof displayEntity.links !== 'undefined' && displayEntity.links.length > 0) {
             //viewArray.push('</small>');
             viewArray.push('<div>');
-            entity.links.forEach(function (value, key) {
+            displayEntity.links.forEach(function (value, key) {
 
                 if (value.source === 'Wikipedia') {
                     viewArray.push('<a href="' + value.url + '" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i></a>');
@@ -603,23 +687,40 @@
             });
             viewArray.push('</div>');
         }
+        }else {
+         viewArray.push('<div>');
+         viewArray.push('<a href="');
+         viewArray.push(displayEntity.link);
+         viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
+         viewArray.push('</a>');
+         viewArray.push('</div>');
+        }
 
         viewArray.push('</div>');
         viewArray.push('<div class="media-body">');
-        viewArray.push('<h4 class="media-heading">' + entity.name + '</h4>');
+        viewArray.push('<h4 class="media-heading">' + displayEntity.name + '</h4>');
 
-        if (typeof entity.description !== 'undefined' && entity.description.length > 120) {
+        if(typeof displayEntity.shortDescription !== 'undefined') {
+            viewArray.push('<p><em>' + displayEntity.shortDescription + '</em></p>');
+        }
+
+
+        if (typeof displayEntity.description  !== 'undefined' && displayEntity.description.length > 120) {
             //viewArray.push(entity.description.substring(0, 120));
-            var descArray = entity.description.split(" ", 20);
+            var descArray =displayEntity.description.split(" ", 20);
             viewArray.push(descArray.join(" "));
             viewArray.push(' ... ');
         } else {
-            viewArray.push(entity.description);
+            viewArray.push(displayEntity.description );
         }
 
         if ('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
-            viewArray.push('<div><strong>Confidence:</strong> ');
+            if(version === "v1") {
+                viewArray.push('<div><strong>Confidence:</strong> ');
+            } else {
+                viewArray.push('<div><strong>Salience:</strong> ');
+            }
             viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2));
             viewArray.push('</div>');
         }
@@ -633,15 +734,28 @@
         return viewArray.join("");
     }
 
-    function entity_box2(entity) {
-        var type = determine_type(entity["categories"]);
+    function entity_box2(entity, language) {
+        var displayEntity = entity;
+        if(version === "v2") {
+            displayEntity = getEntityMetaForLanguage(entity, language);
+        }
+       var type;
+       if(version === "v1") {
+            type = determine_type(entity["categories"]);
+       } else {
+            type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+       }
+
         var errorImage = getDefaultImageByType(type);
 
         var includeImages = $("#ambiverse-text-input").data("entity-images");
         var includeIcons = $("#ambiverse-text-input").data("entity-icons");
         var onlyFreeImages = $("#ambiverse-text-input").data("entity-free-images");
+        var entityThumbnail = errorImage;
 
-        var entityThumbnail = generate_thumbinail_image(entity.imageUrl, 280, type);
+        if(typeof entity.image !== 'undefined') {
+            entityThumbnail = generate_thumbinail_image(entity.image.url, 280, type);
+        }
 
         if (onlyFreeImages === 1 && !isFreeImage(entityThumbnail)) {
             entityThumbnail = errorImage;
@@ -657,30 +771,44 @@
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
 
         if (includeImages === 1 || includeIcons === 1) {
-            viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + entity.name + '" onerror = "this.src=\'' + errorImage + '\'"></div>');
+            viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + displayEntity.name + '" onerror = "this.src=\'' + errorImage + '\'"></div>');
         } else {
             viewArray.push('<div>&nbsp;</div>');
         }
-        viewArray.push('<figcaption>');
-        viewArray.push('<h3 class="media-heading">' + entity.name + '</h3>');
 
-        if (typeof entity.description !== 'undefined') {
-            var descArray = entity.description.split(" ");
+
+        viewArray.push('<figcaption>');
+        viewArray.push('<h3 class="media-heading">' + displayEntity.name + '</h3>');
+
+        if(typeof displayEntity.shortDescription !== 'undefined') {
+            viewArray.push('<p><em>' + displayEntity.shortDescription + '</em></p>');
+        }
+
+        if (typeof displayEntity.description !== 'undefined') {
+            var descArray = displayEntity.description.split(" ");
 
             if (descArray.length > 15) {
                 //viewArray.push(entity.description.substring(0, 120));
-                descArray = entity.description.split(" ", 15);
+                descArray = displayEntity.description.split(" ", 15);
                 viewArray.push(descArray.join(" "));
                 viewArray.push(' ... ');
             } else {
-                viewArray.push(entity.description);
+                viewArray.push(displayEntity.description);
             }
         }
 
-        if (typeof entity.links !== 'undefined' && entity.links.length > 0) {
-            //viewArray.push('</small>');
+        if(version === "v2") {
+          viewArray.push('<div>');
+          viewArray.push('<a href="');
+          viewArray.push(displayEntity.link);
+          viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
+          viewArray.push('</a>');
+          viewArray.push('</div>');
+        } else {
+           if (typeof displayEntity.links !== 'undefined' && displayEntity.links.length > 0) {
+
             viewArray.push('<div>');
-            entity.links.forEach(function (value, key) {
+            displayEntity.links.forEach(function (value, key) {
 
                 if (value.source === 'Wikipedia') {
                     viewArray.push('<a href="');
@@ -690,12 +818,18 @@
                 }
             });
             viewArray.push('</div>');
+           }
         }
 
         if ('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
             viewArray.push('<div>&nbsp;</div>');
-            viewArray.push('<div class="confidence"><strong>Confidence:</strong> ' + parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2) + '</div>');
+            if(version === "v1") {
+                viewArray.push('<div><strong>Confidence:</strong> ');
+            } else {
+                viewArray.push('<div><strong>Salience:</strong> ');
+            }
+            viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2) + '</div>');
         }
 
         viewArray.push('</div>');
@@ -921,5 +1055,16 @@
             $("li.list__item").css("width", "25%");
         }
     }
+
+    function upperCaseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function lowerCaseAllWordsExceptFirstLetters(string) {
+        return string.replace(/\w\S*/g, function (word) {
+            return word.charAt(0) + word.slice(1).toLowerCase();
+        });
+    }
+
 
 })(jQuery);

@@ -434,12 +434,12 @@ class Ambiverse_ELD_Admin
                 'id' => 'settings-api-version',
                 'selections' 	=> array(
                     0 => array(
-                        'value' => 'v1beta3',
-                        'label' =>  'v1beta3',
-                    ),
-                    1 => array(
                         'value' => 'v1',
                         'label' =>  'v1',
+                    ),
+                    1 => array(
+                        'value' => 'v2',
+                        'label' =>  'v2',
                     ),
                 )
             )

@@ -114,6 +114,7 @@ class Ambiverse_ELD_Public {
         wp_localize_script($this->plugin_name, 'ajax_obj', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => $nonce,
+            'version'  => $this->options["settings-api-version"]
         ));
     }
 
