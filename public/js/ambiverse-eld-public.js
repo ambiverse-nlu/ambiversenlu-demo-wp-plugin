@@ -925,7 +925,7 @@
     }
 
     function isFreeImage(imageUrl) {
-        if (imageUrl.contains("/commons/")) {
+        if (imageUrl.indexOf("/commons/") != -1) {
             return true;
         }
         return false;
