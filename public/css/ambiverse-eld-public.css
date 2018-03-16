@@ -41,6 +41,7 @@
 
 }
 
+
 .ambiverse-eld-wrap .settings {
     font-size: 9pt;
     color: #333;
@@ -594,10 +595,34 @@
     flex: 1 0 auto;
 }
 
+.confidence {
+    position: absolute;
+    bottom: 40px;
+    margin-right: 30px;
+    flex: 1 0 auto;
+}
+
 .unknown {
     /*position: absolute;*/
     bottom: 40px;
     margin-right: 30px;
     flex: 1 0 auto;
     min-height: 80px;
+}
+
+.image-attr {
+        position: absolute;
+        bottom: 0px;
+        font-size: 9px;
+        background: rgba(255,255,255,0.5);
+        width: 100%;
+        height: 20px;
+        line-height: 10px;
+        padding-top: 5px;
+        padding-left: 5px;
+}
+
+.image-attr a {
+    text-decoration: none !important;
+    color: #474d51;
 }

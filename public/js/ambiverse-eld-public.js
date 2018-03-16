@@ -630,6 +630,7 @@
             result.link = entity.links["en"].value
            }
 
+
           return result;
         }
 
@@ -717,9 +718,9 @@
         if ('confidence' in entity) {
             viewArray.push('<div>&nbsp;</div>');
             if(version === "v1") {
-                viewArray.push('<div><strong>Confidence:</strong> ');
+                viewArray.push('<div class="confidence"><strong>Confidence:</strong> ');
             } else {
-                viewArray.push('<div><strong>Salience:</strong> ');
+                viewArray.push('<div class="confidence"><strong>Salience:</strong> ');
             }
             viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2));
             viewArray.push('</div>');
@@ -735,6 +736,8 @@
     }
 
     function entity_box2(entity, language) {
+
+
         var displayEntity = entity;
         if(version === "v2") {
             displayEntity = getEntityMetaForLanguage(entity, language);
@@ -771,7 +774,30 @@
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
 
         if (includeImages === 1 || includeIcons === 1) {
-            viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + displayEntity.name + '" onerror = "this.src=\'' + errorImage + '\'"></div>');
+            viewArray.push('<div class="crop"><img src="' + entityThumbnail + '" alt="' + displayEntity.name + '" onerror = "this.src=\'' + errorImage + '\'">');
+            if(typeof entity.image !== 'undefined' && ((typeof entity.image.author !== 'undefined' && entity.image.author !== null) || (typeof entity.image.licenses !== 'undefined' && entity.image.licenses.length > 0))) {
+
+                viewArray.push('<div class="image-attr">');
+                if(typeof entity.image.author !== 'undefined' && entity.image.author !== null) {
+                    viewArray.push('By <a target="_blank"');
+                    if(typeof entity.image.author.url !== 'undefined' && entity.image.author.url != null) {
+                        viewArray.push(' href="'+entity.image.author.url+'"');
+                    }
+                    viewArray.push('>'+entity.image.author.name+'</a>');
+                }
+
+
+                if(typeof entity.image.licenses !== 'undefined' && entity.image.licenses.length > 0) {
+                    if(typeof entity.image.author !== 'undefined' && entity.image.author !== null) {
+                        viewArray.push(', ');
+                    }
+
+                    entity.image.licenses.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} );
+                    viewArray.push('<a target="_blank" href="'+entity.image.licenses[0].url+'">'+shortenLicenceName(entity.image.licenses[0].name)+'</a>');
+                }
+                viewArray.push('</div>');
+            }
+            viewArray.push('</div>');
         } else {
             viewArray.push('<div>&nbsp;</div>');
         }
@@ -789,9 +815,21 @@
 
             if (descArray.length > 15) {
                 //viewArray.push(entity.description.substring(0, 120));
-                descArray = displayEntity.description.split(" ", 15);
-                viewArray.push(descArray.join(" "));
-                viewArray.push(' ... ');
+                //descArray = displayEntity.description.split(" ", 15);
+                //viewArray.push(descArray.join(" "));
+                const regex = /(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/;
+                let m;
+                var entityDesc;
+                if ((m = regex.exec(displayEntity.description)) !== null) {
+                    // The result can be accessed through the `m`-variable.
+                    m.forEach((match, groupIndex) => {
+                        if(groupIndex === 1) {
+                            entityDesc = match
+                        }
+                    });
+                }
+                viewArray.push(entityDesc) ;
+                //viewArray.push(' ... ');
             } else {
                 viewArray.push(displayEntity.description);
             }
@@ -799,9 +837,11 @@
 
         if(version === "v2") {
           viewArray.push('<div>');
-          viewArray.push('<a href="');
+          viewArray.push(' <a href="');
           viewArray.push(displayEntity.link);
-          viewArray.push('" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-wikipedia-w fa-1"></i>');
+          viewArray.push('" target="_blank" >');
+          //viewArray.push('<i class="fa fa-wikipedia-w fa-1"></i>');
+          viewArray.push("Wikipedia")
           viewArray.push('</a>');
           viewArray.push('</div>');
         } else {
@@ -825,9 +865,9 @@
             viewArray.push('<div>&nbsp;</div>');
             viewArray.push('<div>&nbsp;</div>');
             if(version === "v1") {
-                viewArray.push('<div><strong>Confidence:</strong> ');
+                viewArray.push('<div class="confidence"><strong>Confidence:</strong> ');
             } else {
-                viewArray.push('<div><strong>Salience:</strong> ');
+                viewArray.push('<div class="confidence"><strong>Salience:</strong> ');
             }
             viewArray.push(parseFloat(Math.round(entity.confidence * 100) / 100).toFixed(2) + '</div>');
         }
@@ -842,6 +882,18 @@
         viewArray.push('</figure>');
 
         return viewArray.join("");
+    }
+
+    function shortenLicenceName(licence) {
+
+        var result = licence;
+        if(licence.startsWith("CreativeCommonsLicense")) {
+            result = licence.replace("CreativeCommonsLicense-", "CC ").replaceAll("-", " ");
+        }
+        if(licence === "PublicDomainLicense") {
+            result = "Public Domain";
+        }
+        return result;
     }
 
     function determine_type(categories) {
