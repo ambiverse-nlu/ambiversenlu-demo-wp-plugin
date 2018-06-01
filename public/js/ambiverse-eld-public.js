@@ -49,6 +49,7 @@
     var entityMetadata = {};
     var renderedEntities = [];
     var thresholdSlider;
+    var facts = [];
 
     var state = $.deparam.querystring();
     var requestInProgress = false;
@@ -162,6 +163,7 @@
 
         var mentions = [];
         var boxes = [];
+
         if (mention === null) {
             $("#ambiverse-annotated-text span.mention").each(function () {
                 var idTmp = $(this).data("id");
@@ -183,6 +185,18 @@
         } else {
             boxes.push(box);
         }
+        if (box === null) {
+            $("#ambiverse-result-open-facts .mention-box").each(function () {
+                var idTmp = $(this).data("id");
+                if (idTmp === id) {
+                    boxes.push(this);
+                }
+            });
+        } else {
+            boxes.push(box);
+        }
+
+
 
         var topMention;
         mentions.forEach(function (value, key) {
@@ -352,9 +366,13 @@
                 });
 
                  //console.log(allEntities);
-                $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy));
+
+                $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy, facts));
                 $("#ambiverse-result-entities").html(entity_view(allEntities, language));
 
+                 if(typeof facts !== 'undefined' && facts !== null) {
+                    show_open_facts(facts, language);
+                 }
 
             },
             error: function (xhr, textStatus, errorThrown) {
@@ -419,6 +437,8 @@
         var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
         var confidenceThreshold = thresholdSlider.slider('getValue');
         var language = $("#settings-language").val();
+        var apiEndpoint = $("#api-endpoint").val();
+        var apiMethod = $("#api-method").val();
 
         var data = {
             action: "tag_analyze_document",
@@ -427,19 +447,22 @@
             coherentDocument: coherentDocument,
             confidenceThreshold: confidenceThreshold,
             language: language,
+            apiEndpoint: apiEndpoint,
+            apiMethod: apiMethod,
             _ajax_nonce: ajax_obj.nonce
         };
 
         //console.log(data);
+
         $.ajax({
             type: "post",
             dataType: "json",
             url: ajax_obj.ajax_url,
             data: data,
             success: function (data) {
-
                 //console.log(data);
                 version = ajax_obj.version;
+
 
                 if (typeof data["code"] !== 'undefined' && data["code"] !== 200) {
                     $("#ambiverse-annotated-text").removeClass("well");
@@ -462,6 +485,7 @@
 
                     var allEntities = [];
                     mentions = data["matches"];
+                    facts = data["facts"];
 
                     if(version === "v2") {
                         allEntities = data["entities"];
@@ -474,13 +498,14 @@
                         });
                     }
 
+
                     //Add the text to the json output and highlight the block
                     $("#ambiverse-json-output code").text(JSON.stringify(data, null, 2));
                     $('#ambiverse-json-output code').each(function (i, block) {
                         hljs.highlightBlock(block);
                     });
 
-                    $("#ambiverse-annotated-text").html(annotate_text(mentions));
+                    $("#ambiverse-annotated-text").html(annotate_text(mentions, facts));
 
                     if (mentions.length === 0) {
                         $("#ambiverse-result-entities").html("<div style='margin: 5px 5px 20px 5px;' class='alert alert-warning'>No matches found!</div>");
@@ -488,6 +513,7 @@
                         //Get entity metadata for all entities in the text
                         get_entity_metadata(allEntities, language);
                     }
+
 
                 }
             },
@@ -530,10 +556,11 @@
         });
     }
 
-    function annotate_text(mentions) {
+    function annotate_text(mentions, facts) {
 
-        var annotatedArray = [];
+
         var prevOffset = 0;
+        var annotatedText = text;
         mentions.forEach(function (value, key, mentions) {
 
             var mentionText = value["text"];
@@ -542,7 +569,7 @@
             var endIndex = offset + charLength;
             var entity = value["entity"];
 
-
+            var annotatedArray = [];
             var type = "Unknown";
             if (typeof entity !== 'undefined' && 'categories' in entity) {
 
@@ -554,7 +581,7 @@
             }
 
             if (endIndex <= text.length) {
-                annotatedArray.push(text.substring(prevOffset, offset));
+                //annotatedArray.push(text.substring(prevOffset, offset));
                 annotatedArray.push("<span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
 
                 if (typeof entity !== 'undefined' && 'id' in entity) {
@@ -567,14 +594,107 @@
                 annotatedArray.push(">" + mentionText + "</span>");
                 prevOffset = endIndex;
             }
+            annotatedText = annotatedText.replace(text.substring(offset, endIndex), annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
 
         });
-        if (prevOffset <= text.length) {
-            var endIndex = text.length;
-            annotatedArray.push(text.substring(prevOffset, endIndex));
-        }
 
-        return annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
+        if(typeof facts !== 'undefined') {
+
+            var annotatedOffsets = [];
+            facts.forEach(function (value, key, facts) {
+                //console.log(value);
+                var relationAnnotation = [];
+                var relation = value["relation"];
+                if(typeof relation !== 'undefined' && relation.charLength > 0 && relation.charOffset + relation.charLength <= text.length) {
+                    if(!annotatedOffsets.includes(relation.charOffset)) {
+                        annotatedOffsets.push(relation.charOffset);
+
+
+                        relationAnnotation.push("<span class='mention magenta' data-id='"+relation.text+"-"+key+"'>");
+                        relationAnnotation.push(text.substring(relation.charOffset, relation.charOffset+relation.charLength));
+                        relationAnnotation.push("</span>");
+                        annotatedText = annotatedText.replace(text.substring(relation.charOffset, relation.charOffset+relation.charLength), relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
+                        //console.log(relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'))
+                    }
+                }
+            });
+        }
+//        if (prevOffset <= text.length) {
+//            var endIndex = text.length;
+//            annotatedArray.push(text.substring(prevOffset, endIndex));
+//        }
+
+        return annotatedText;// annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
+    }
+
+    function show_open_facts(facts, language) {
+
+        $("#open-facts-title").show();
+        var viewArray = [];
+        viewArray.push('<table class="table table-striped">');
+        viewArray.push('<thead><tr>');
+        viewArray.push('<td scope="col" style="min-width: 200px"><strong>Subject</strong></td>');
+        viewArray.push('<td scope="col" style="min-width: 150px"><strong>Relation</strong></td>');
+        viewArray.push('<td scope="col"><strong>Object</strong></td>');
+        viewArray.push('</tr></thead>');
+        viewArray.push('<tbody>');
+        facts.forEach(function (value, key, facts) {
+            viewArray.push('<tr data-toggle="collapse" data-target=".accordion-'+key+'" class="clickable-row"><td>');
+            viewArray.push(value.subject.text);
+            viewArray.push('</td><td class="mention-box" data-id="'+value.relation.text+'-'+key+'">');
+            viewArray.push(value.relation.text);
+            viewArray.push('</td><td>');
+            viewArray.push(value.object.text);
+            viewArray.push('</td></tr>');
+
+            viewArray.push('<tr class="hiddenRow collapse accordion-'+key+'">');
+            viewArray.push('<td>');
+            if(typeof value.subject.entities !== 'undefined' && value.subject.entities.length > 0) {
+                viewArray.push('<strong>Entities</strong><ul class="list-group">');
+
+                value.subject.entities.forEach(function (e, k, entities) {
+                    var entity = entityMetadata[e.id];
+                    var type  = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+                    viewArray.push("<li class='list-group-item' style='border: none !important;'><span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
+                    if (typeof entity !== 'undefined' && 'id' in entity) {
+                        var entityId = entity.id.replace(/'/g, "&#039;");
+                        viewArray.push(" data-id='" + entityId + "'>");
+                     }
+                     viewArray.push(entityMetadata[e.id].names[language].value);
+                     viewArray.push("</span></li>");
+
+                });
+                viewArray.push('</ul>');
+            } else {
+                 viewArray.push("&nbsp;");
+            }
+            viewArray.push('</td>');
+            viewArray.push('<td><strong>Normalized form</strong> <br />'+value.relation.normalizedForm+'</td>');
+            viewArray.push('<td>');
+            if(typeof value.object.entities !== 'undefined' && value.object.entities.length > 0) {
+               viewArray.push('<strong>Entities</strong><ul>');
+
+               value.object.entities.forEach(function (e, k, entities) {
+                     var entity = entityMetadata[e.id];
+                     var type  = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+                     viewArray.push("<li class='list-group-item' style='border: none !important;'><span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
+                     if (typeof entity !== 'undefined' && 'id' in entity) {
+                        var entityId = entity.id.replace(/'/g, "&#039;");
+                        viewArray.push(" data-id='" + entityId + "'>");
+                     }
+                     viewArray.push(entityMetadata[e.id].names[language].value);
+                     viewArray.push("</span></li>");
+               });
+               viewArray.push('</ul>');
+            } else {
+               viewArray.push("&nbsp;");
+            }
+            viewArray.push('</td>');
+            viewArray.push('</tr>');
+
+        });
+
+        $("#ambiverse-result-open-facts").html(viewArray.join(''));
     }
 
     function entity_view(entities, language) {
@@ -665,7 +785,7 @@
 
 
         var viewArray = [];
-        viewArray.push('<div class="media white-box entity-box ' + typeColors + '" data-id="' + entity.id + '">');
+        viewArray.push('<div class="media white-box entity-box mention-box ' + typeColors + '" data-id="' + entity.id + '">');
 
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
         viewArray.push('<div class="pull-left media-left">');
@@ -770,7 +890,7 @@
 
         var viewArray = [];
 
-        viewArray.push('<figure class="white-box entity-box ' + typeColors[type] + ' list__item__inner" data-id="' + entity.id + '" rel="tooltip" data-toggle="tooltip" data-placement="top" title="Click here to see the entity mentioned in the text.">');
+        viewArray.push('<figure class="white-box entity-box mention-box' + typeColors[type] + ' list__item__inner" data-id="' + entity.id + '" rel="tooltip" data-toggle="tooltip" data-placement="top" title="Click here to see the entity mentioned in the text.">');
         viewArray.push('<div class="ribbon ' + typeColors[type] + '">' + type + '</div>');
 
         if (includeImages === 1 || includeIcons === 1) {

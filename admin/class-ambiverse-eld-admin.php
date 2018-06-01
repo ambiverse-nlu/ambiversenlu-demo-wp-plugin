@@ -445,6 +445,7 @@ class Ambiverse_ELD_Admin
             )
         );
 
+
         add_settings_field(
             'ambiverse-settings-api-endpoind',
             apply_filters( $this->plugin_name . 'label-settings-api-endpoint', esc_html__( 'API Endpoint', 'ambiverse-eld' ) ),
@@ -465,6 +466,27 @@ class Ambiverse_ELD_Admin
                 )
             )
         );
+
+         add_settings_field(
+                    'ambiverse-settings-api-method',
+                    apply_filters( $this->plugin_name . 'label-settings-api-method', esc_html__( 'API Method', 'ambiverse-eld' ) ),
+                    array( $this, 'field_select' ),
+                    $this->plugin_name,
+                    $this->plugin_name . '-auth-settings',
+                    array(
+                        'id' => 'settings-api-method',
+                        'selections' 	=> array(
+                            0 => array(
+                                'value' => '/entitylinking/',
+                                'label' =>  'entitylinking',
+                            ),
+                            1 => array(
+                                'value' => '/factextraction/',
+                                'label' =>  'factextraction',
+                            ),
+                        )
+                    )
+                );
 
         add_settings_field(
             'ambiverse-settings-language-settings',
@@ -591,7 +613,12 @@ class Ambiverse_ELD_Admin
     public function section_disambiguation( $params ) {
 
         if ( ! empty( $this->options['settings-entity-linking-endpoint'] ) ) {
-            $atts['entity-linking-url'] = $this->options['settings-api-protocol'] . "://" . $this->options['settings-api-endpoint'] . "." . $this->options['settings-api-url'] . $this->options['settings-api-version'] . $this->options['settings-entity-linking-endpoint'];
+            //$endpoint = $this->options['settings-api-method']; //$this->options['settings-entity-linking-endpoint'];
+            //if($this->options['settings-api-method'] == "factextraction"){
+            //    $endpoint = $this->options['settings-fact-extraction-endpoint'];
+            //}
+
+            $atts['entity-linking-url'] = $this->options['settings-api-protocol'] . "://" . $this->options['settings-api-endpoint'] . "." . $this->options['settings-api-url'] . $this->options['settings-api-version'] .  $this->options['settings-api-method'];
         }
         if ( ! empty( $this->options['settings-knowledge-graph-endpoint'] ) ) {
             $atts['knowledge-graph-url'] = $this->options['settings-api-protocol'] . "://" . $this->options['settings-api-endpoint'] . "." . $this->options['settings-api-url'] . $this->options['settings-api-version'] . $this->options['settings-knowledge-graph-endpoint'];
@@ -638,7 +665,8 @@ class Ambiverse_ELD_Admin
      * @return 		mixed 						The settings section
      */
     public function section_usage( $params ) {
-
+        $atts['settings-api-method'] = $this->options['settings-api-method'];
+        $atts['settings-api-endpoint'] = $this->options['settings-api-endpoint'];
         $atts['settings-threshold-document'] = $this->options['settings-threshold-document'];
         if( $this->options['settings-coherent-document']) {
             $atts['settings-coherent-document'] = "true";
@@ -707,6 +735,7 @@ class Ambiverse_ELD_Admin
         $options[] = array( 'settings-api-endpoint', 'api' );
         $options[] = array( 'settings-api-version', 'v1beta2' );
         $options[] = array( 'settings-entity-linking-endpoint', '/entitylinking/' );
+        $options[] = array( 'settings-fact-extraction-endpoint', '/factextraction/' );
         $options[] = array( 'settings-knowledge-graph-endpoint', '/knowledgegraph/' );
         $options[] = array( 'settings-entity-layout', 'layout1' );
 

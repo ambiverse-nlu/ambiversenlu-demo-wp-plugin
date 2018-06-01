@@ -128,7 +128,17 @@ class Ambiverse_ELD_Public {
     function analyze_document_ajax_handler() {
 
         check_ajax_referer('ambiverse-analyze');
-        $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $this->options["settings-api-endpoint"]);
+
+        $endpoint = $this->options["settings-api-endpoint"];
+        $method = $this->options["settings-api-method"];
+        if($_POST["apiEndpoint"] !="") {
+            $endpoint = $_POST["apiEndpoint"];
+        }
+        if($_POST["apiMethod"] !="") {
+            $method = $_POST["apiMethod"];
+        }
+
+        $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $endpoint, $method);
 
         if($_POST["language"] !="auto") {
             if($_POST["annotatedMentions"]!="") {
@@ -206,6 +216,8 @@ class Ambiverse_ELD_Public {
         ob_start();
         $defaults['coherent-document'] 	    =  $this->options['settings-coherent-document'];
         $defaults['confidence-threshold'] 	=  $this->options['settings-threshold-document'];
+        $defaults['settings-api-endpoint'] 	=  $this->options['settings-api-endpoint'];
+        $defaults['settings-api-method'] 	=  $this->options['settings-api-method'];
         $defaults['text']                   =  $content;
         $defaults['class']                  = "form-control";
         $defaults['rows']                   = 7;
@@ -271,6 +283,8 @@ class Ambiverse_ELD_Public {
 
         $args = shortcode_atts( $defaults, $atts, 'ambiverse-eld' );
 
+        //echo json_encode($args);
+        //wp_die();
 
 
         include ambiverse_eld_get_template( 'ambiverse-eld-public-display' );

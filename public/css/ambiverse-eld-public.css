@@ -115,6 +115,11 @@
     border-bottom: 1px dotted #777;
 }
 
+.mention.magenta {
+    color: #cc00ff;
+   border-bottom-color: #a300cc;
+}
+
 .mention.selected {
     position: relative;
     border-bottom: 2px solid transparent;
@@ -163,6 +168,12 @@
     background-color: #ebebeb;
     border-bottom-color: #777;
     color: #333;
+}
+
+.mention.magenta.selected {
+    background-color: #f5ccff;
+    border-bottom-color: #a300cc;
+    color: #b800e6;
 }
 
 .entity-box {
@@ -625,4 +636,17 @@
 .image-attr a {
     text-decoration: none !important;
     color: #474d51;
+}
+
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+.hiddenRow.collapse.in {
+    display: table-row !important;
+}
+
+.clickable-row {
+    cursor:pointer;
 }

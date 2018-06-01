@@ -95,11 +95,13 @@ class Ambiverse_API
      * @param string $client_secret
      * @param string $api_version
      */
-    public function __construct( $client_id,  $client_secret, $api_version, $api_endpoint) {
+    public function __construct( $client_id,  $client_secret, $api_version, $api_endpoint, $api_method) {
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->api_version = $api_version;
         $this->api_endpoint = $api_endpoint;
+        $this->entity_linking_endpoint =  $api_method;
+
 
         $this->api_token_endpoint = $this->protocol . "://" . $this->api_endpoint . "." . $this->api_url . $this->api_token_endpoint;
         $this->knowledge_graph_endpoint = $this->protocol . "://" . $this->api_endpoint . "." . $this->api_url . $this->api_version . $this->knowledge_graph_endpoint;
@@ -178,13 +180,15 @@ class Ambiverse_API
             'headers' => $this->get_headers(),
         );
 
-//        if($endpoint == $this->entity_linking_endpoint) {
-//            echo json_encode($data);
-//            wp_die();
-//        }
+        //if($endpoint == $this->entity_linking_endpoint) {
+        //   echo json_encode($endpoint);
+        //   wp_die();
+        //}
 
         $url = $endpoint . $method;
         //$url = "http://localhost:8080/aida/analyze";
+        //echo json_encode($url);
+        //wp_die();
         $response = wp_remote_post( esc_url_raw($url), $request_args );
 
         try {

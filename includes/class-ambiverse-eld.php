@@ -224,6 +224,7 @@ class Ambiverse_ELD {
 
         $this->loader->add_action( 'ambiverse-eld-public-entities', $plugin_templates, 'entities_holder');
         $this->loader->add_action( 'ambiverse-eld-public-settings', $plugin_templates, 'settings_output');
+        $this->loader->add_action( 'ambiverse-eld-open-facts', $plugin_templates, 'open_facts_holder');
 
     }
 

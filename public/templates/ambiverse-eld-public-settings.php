@@ -23,6 +23,8 @@
 <!--            </label>-->
 <!--            </div>-->
 <!--        </div>-->
+         <input type="hidden" id="api-endpoint" name="api-endpoint" value="<?php echo $args["settings-api-endpoint"]; ?>" />
+         <input type="hidden" id="api-method" name="api-method" value="<?php echo $args["settings-api-method"]; ?>" />
         <div class="form-group">
             <label for="settings-threshold" class="col-sm-5 control-label">Confidence threshold</label>
             <div class="col-sm-7" style="padding-top: 10px;">

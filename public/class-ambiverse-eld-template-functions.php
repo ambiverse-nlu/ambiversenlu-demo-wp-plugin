@@ -161,6 +161,16 @@ class Ambiverse_ELD_Template_Functions
     }
 
     /**
+     * Includes the open facts loop view template file
+     *
+     * @hooked ambiverse-eld-open-facts
+     *
+     */
+     public function open_facts_holder() {
+         include ambiverse_eld_get_template( 'ambiverse-eld-open-facts' );
+     }
+
+    /**
      * Includes the settings
      *
      * @hooked ambiverse-eld-public-settings

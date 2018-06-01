@@ -24,7 +24,10 @@
         <div>&nbsp;</div>
         <?php do_action('ambiverse-eld-public-text-result'); ?>
 
+
         <?php do_action('ambiverse-eld-public-entities'); ?>
+
+        <?php do_action('ambiverse-eld-open-facts'); ?>
     </div>
     <div role="tabpanel" class="tab-pane" id="json" style="padding-top: 10px;">
         <?php do_action('ambiverse-eld-public-pills'); ?>
