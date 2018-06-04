@@ -532,6 +532,8 @@
                 $("#ambiverse-json-output-meta code").text("");
                 $("#ambiverse-annotated-text").html("");
                 $("#ambiverse-result-entities").html("");
+                $("#ambiverse-result-open-facts").html("");
+                $("#open-facts-title").hide();
 
                 $("#result-wrapper").css('display', 'block');
                 l.start();
