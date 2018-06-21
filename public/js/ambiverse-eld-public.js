@@ -280,6 +280,7 @@
         });
 
         //console.log(entities);
+        //console.log(entityIds);
         $.ajax({
             type: "post",
             dataType: "json",
@@ -435,6 +436,7 @@
         }
 
         var coherentDocument = $(textInput).data("coherent-document"); //$("#settings-coherent").prop("checked");
+        var extractConcepts = $(textInput).data("concept");
         var confidenceThreshold = thresholdSlider.slider('getValue');
         var language = $("#settings-language").val();
         var apiEndpoint = $("#api-endpoint").val();
@@ -445,6 +447,7 @@
             annotatedMentions: annotatedMentions,
             text: textInputString,
             coherentDocument: coherentDocument,
+            extractConcepts: extractConcepts,
             confidenceThreshold: confidenceThreshold,
             language: language,
             apiEndpoint: apiEndpoint,
@@ -709,18 +712,20 @@
 
 
         entities.forEach(function (value, key, entities) {
-            if(jQuery.inArray(value.id, renderedEntities) === -1 ) {
-                if (entityLayout === "layout1") {
-                    viewArray.push('<li class="flex-item">');
-                    viewArray.push(entity_box1(value, language));
-                    viewArray.push('</li>');
-                    renderedEntities.push(value.id);
-                } else if (entityLayout === "layout2") {
-                    viewArray.push('<li class="list__item">');
-                    viewArray.push(entity_box2(value, language));
-                    viewArray.push('</li>');
-                    renderedEntities.push(value.id);
-                }
+            if(value != undefined) {
+                if(jQuery.inArray(value.id, renderedEntities) === -1 ) {
+                    if (entityLayout === "layout1") {
+                        viewArray.push('<li class="flex-item">');
+                        viewArray.push(entity_box1(value, language));
+                        viewArray.push('</li>');
+                        renderedEntities.push(value.id);
+                    } else if (entityLayout === "layout2") {
+                        viewArray.push('<li class="list__item">');
+                        viewArray.push(entity_box2(value, language));
+                        viewArray.push('</li>');
+                        renderedEntities.push(value.id);
+                    }
+               }
             }
         });
         viewArray.push('</div>');

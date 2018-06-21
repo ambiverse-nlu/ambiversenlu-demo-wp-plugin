@@ -19,6 +19,7 @@
     rows="<?php echo esc_attr($args['rows']); ?>"
     maxlength="<?php echo esc_attr($args['max-length']); ?>"
     data-coherent-document="<?php echo esc_attr($args['coherent-document']); ?>"
+    data-concept="<?php echo esc_attr($args['concept']); ?>"
     data-confidence-threshold="<?php echo esc_attr($args['confidence-threshold']); ?>"
     data-entity-layout="<?php echo esc_attr($args['entity-layout']); ?>"
     data-entity-images="<?php echo esc_attr($args['entity-images']); ?>"

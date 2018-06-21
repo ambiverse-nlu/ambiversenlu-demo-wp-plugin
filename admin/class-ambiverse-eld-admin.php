@@ -534,6 +534,21 @@ class Ambiverse_ELD_Admin
         );
 
         add_settings_field(
+            'ambiverse-settings-concept-settings',
+            apply_filters( $this->plugin_name . 'label-settings-concept', esc_html__( 'Extract Concepts?', 'ambiverse-eld' ) ),
+            array( $this, 'field_checkbox' ),
+            $this->plugin_name,
+            $this->plugin_name . '-settings-disambiguation',
+            array(
+
+                'description' 	=> 'Concepts should be extracted',
+                'id' 			=> 'settings-concept',
+                'value' 		=> '0'
+
+            )
+        );
+
+        add_settings_field(
             'ambiverse-settings-threshold-settings',
             apply_filters( $this->plugin_name . 'label-settings-threshold', esc_html__( 'Default confidence threshold', 'ambiverse-eld' ) ),
             array( $this, 'field_slider' ),
@@ -673,6 +688,13 @@ class Ambiverse_ELD_Admin
         } else {
             $atts['settings-coherent-document'] = "false";
         }
+
+        if( $this->options['settings-concept']) {
+            $atts['settings-concept'] = "true";
+        } else {
+            $atts['settings-concept'] = "false";
+        }
+
 
         include( plugin_dir_path( __FILE__ ) . 'partials/ambiverse-eld-admin-usage.php' );
     } // section_messages()

@@ -144,6 +144,7 @@ class Ambiverse_ELD_Public {
             if($_POST["annotatedMentions"]!="") {
                 $data = array(
                     "coherentDocument" => $_POST['coherentDocument'],
+                    "extractConcepts" => $_POST['extractConcepts'],
                     "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                     "text" => str_replace('\\', '', $_POST['text']),//$_POST['text'],
                     "language" => $_POST["language"],
@@ -152,6 +153,7 @@ class Ambiverse_ELD_Public {
             } else {
                 $data = array(
                     "coherentDocument" => $_POST['coherentDocument'],
+                    "extractConcepts" => $_POST['extractConcepts'],
                     "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                     "text" => str_replace('\\', '', $_POST['text']),//$_POST['text'],
                     "language" => $_POST["language"],
@@ -161,6 +163,7 @@ class Ambiverse_ELD_Public {
             if($_POST["annotatedMentions"]!="") {
                 $data = array(
                     "coherentDocument" => $_POST['coherentDocument'],
+                    "extractConcepts" => $_POST['extractConcepts'],
                     "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                     "text" => str_replace('\\', '', $_POST['text']),
                     "annotatedMentions" => $_POST["annotatedMentions"],
@@ -168,6 +171,7 @@ class Ambiverse_ELD_Public {
             } else {
                 $data = array(
                     "coherentDocument" => $_POST['coherentDocument'],
+                    "extractConcepts" => $_POST['extractConcepts'],
                     "confidenceThreshold" => doubleval($_POST['confidenceThreshold']),
                     "text" => str_replace('\\', '', $_POST['text']),
                 );
@@ -184,14 +188,21 @@ class Ambiverse_ELD_Public {
 
         check_ajax_referer('ambiverse-analyze');
 
-        $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $this->options["settings-api-endpoint"]);
+        $endpoint = $this->options["settings-api-endpoint"];
+        $method = $this->options["settings-api-method"];
+        if($_POST["apiEndpoint"] !="") {
+            $endpoint = $_POST["apiEndpoint"];
+        }
+        if($_POST["apiMethod"] !="") {
+            $method = $_POST["apiMethod"];
+        }
+
+        $api = new Ambiverse_API($this->options["settings-client-id"], $this->options["settings-client-secret"], $this->options["settings-api-version"], $endpoint, $method);
         $data = $_POST['entities'];
 
-        //echo json_encode($data);
-        //wp_die();
         if($data != null && sizeof($data) > 0) {
-            $response = $api->call_knowledge_graph('entities?offset=0&limit=' . sizeof($data), $data);
-            echo json_encode($response);
+          $response = $api->call_knowledge_graph('entities?offset=0&limit=' . sizeof($data), $data);
+          echo json_encode($response);
         }
         wp_die(); // all ajax handlers should die when finished
 
@@ -215,6 +226,7 @@ class Ambiverse_ELD_Public {
     public function render_demo( $atts = array(), $content = null ) {
         ob_start();
         $defaults['coherent-document'] 	    =  $this->options['settings-coherent-document'];
+        $defaults['concept'] 	            =  $this->options['settings-concept'];
         $defaults['confidence-threshold'] 	=  $this->options['settings-threshold-document'];
         $defaults['settings-api-endpoint'] 	=  $this->options['settings-api-endpoint'];
         $defaults['settings-api-method'] 	=  $this->options['settings-api-method'];

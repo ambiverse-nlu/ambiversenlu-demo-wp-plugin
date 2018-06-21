@@ -7,7 +7,7 @@
  * @package           Ambiverse_eld
  *
  * @wordpress-plugin
- * Plugin Name:       Ambiverse Entity Linking Demo
+ * Plugin Name:       Ambiverse Entity Linking Demo Concepts
  * Plugin URI:        http://ambiverse.com/plugins/ambiverse-entitylinking-demo
  * Description:       Displays the capability of the Ambiverse Natural Understanding API in a nice output for the ambiverse.com web page
  * Version:           0.9
