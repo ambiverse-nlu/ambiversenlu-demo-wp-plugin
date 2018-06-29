@@ -40,6 +40,8 @@
         Event: "orange",
         Other: "red",
         Unknown: "gray",
+        Relation: "magenta",
+        Concept: "gray",
     };
 
 
@@ -89,7 +91,7 @@
             analyze_text();
 
             //Log the event in Google Analytics
-            ga('send', 'event', 'Buttons', 'clicked', 'Analyze Button');
+            //ga('send', 'event', 'Buttons', 'clicked', 'Analyze Button');
         });
 
         $("#settings-language").change(function () {
@@ -308,6 +310,7 @@
                     }
                 }
                 if(version === "v2") {
+
                     entityMetadata = data["entities"];
                 }
 
@@ -317,7 +320,9 @@
 
                 var mentionsCopy = clone(mentions);
                 mentionsCopy.forEach(function (mention, key) {
+
                     if (!jQuery.isEmptyObject(mention["entity"])) {
+
                         var confidence = 0;
                         if(version === "v1") {
                             var confidence = mention["entity"].confidence;
@@ -337,14 +342,12 @@
                             mention["entity"] = entityMetadata[mention["entity"].id];
                         }
 
-
                         mention["entity"]["confidence"] = confidence;
                         entitiesWithconfidences[mention["entity"].id] = confidence;
                         allEntities.push(entityMetadata[mention["entity"].id]);
 
 
                     } else {
-
                         var entity = {};
                         entity["id"] = mention["text"];
                         entity["name"] = null;
@@ -366,9 +369,21 @@
 
                 });
 
-                 //console.log(allEntities);
 
-                $("#ambiverse-annotated-text").html(annotate_text(mentionsCopy, facts));
+                 var objects = [];
+                 mentionsCopy.forEach(function (value, key, mentionsCopy) {
+                    objects.push(value);
+                 });
+
+                 splitRelationWords(facts).forEach(function(value, key) {
+                    objects.push(value);
+                 });
+
+                 //Sort the objects to be shown by the offset
+                 objects.sort(function(a,b) {return (a.charOffset > b.charOffset) ? 1 : ((b.charOffset > a.charOffset) ? -1 : 0);} );
+
+                $("#ambiverse-annotated-text").html(annotate_text(objects));
+
                 $("#ambiverse-result-entities").html(entity_view(allEntities, language));
 
                  if(typeof facts !== 'undefined' && facts !== null) {
@@ -399,6 +414,42 @@
         })
     }
 
+    function splitRelationWords(facts) {
+        var annotatedOffsets = [];
+        var objects = [];
+        facts.forEach(function(value, key, facts) {
+            if(!annotatedOffsets.includes(value.relation.charOffset)) {
+                annotatedOffsets.push(value.relation.charOffset);
+                var snippet = text.substring(value.relation.charOffset, value.relation.charOffset+value.relation.charLength);
+                var relationWords = value.relation.text.split(" ");
+                relationWords.forEach(function(word, key2) {
+                    var index = snippet.search("\\b"+word+"\\b");
+                    var relationMention = {};
+                    relationMention.type = "Relation";
+                    relationMention.id = relationWords[0]+"-"+key;
+                    relationMention.text = word;
+                    relationMention.charOffset = value.relation.charOffset+index;
+                    relationMention.charLength = word.length;
+                    objects.push(relationMention);
+                });
+            }
+        });
+
+        //Connect consecutive words in a relation
+        var len = objects.length;
+        while(len-- && len >0) {
+
+            if(objects[len-1].charOffset+objects[len-1].charLength+1 === objects[len].charOffset) {
+                objects[len-1].text = objects[len-1].text + " "+objects[len].text;
+                objects[len-1].charLength = objects[len-1].charLength + objects[len].charLength + 1;
+                objects.splice(len,1);
+            }
+
+
+        }
+
+        return objects;
+    }
     function analyze_text() {
         var l = Ladda.create(document.querySelector('.progress-button'));
 
@@ -508,7 +559,7 @@
                         hljs.highlightBlock(block);
                     });
 
-                    $("#ambiverse-annotated-text").html(annotate_text(mentions, facts));
+                    $("#ambiverse-annotated-text").html(annotate_text(mentions));
 
                     if (mentions.length === 0) {
                         $("#ambiverse-result-entities").html("<div style='margin: 5px 5px 20px 5px;' class='alert alert-warning'>No matches found!</div>");
@@ -561,20 +612,22 @@
         });
     }
 
-    function annotate_text(mentions, facts) {
+    function annotate_text(objects) {
 
 
         var prevOffset = 0;
         var annotatedText = text;
-        mentions.forEach(function (value, key, mentions) {
+        var annotatedArray = [];
 
+
+
+        objects.forEach(function (value, key, objects) {
             var mentionText = value["text"];
             var charLength = value["charLength"];
             var offset = value["charOffset"];
             var endIndex = offset + charLength;
             var entity = value["entity"];
 
-            var annotatedArray = [];
             var type = "Unknown";
             if (typeof entity !== 'undefined' && 'categories' in entity) {
 
@@ -583,53 +636,67 @@
                 } else {
                     type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
                 }
+            } else {
+                type = value["type"];
             }
 
             if (endIndex <= text.length) {
-                //annotatedArray.push(text.substring(prevOffset, offset));
+
+                annotatedArray.push(text.substring(prevOffset, offset));
                 annotatedArray.push("<span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
 
                 if (typeof entity !== 'undefined' && 'id' in entity) {
                     var entityId = entity.id.replace(/'/g, "&#039;");
                     annotatedArray.push(" data-id='" + entityId + "'");
+                } else {
+                    var entityId = value.id;
+                    annotatedArray.push(" data-id='" + entityId + "'");
                 }
                 if (typeof entity !== 'undefined' && 'confidence' in entity) {
                     annotatedArray.push("data-confidence='" + value["entity"].confidence + "'");
                 }
+                if(value.type === "Relation") {
+                    mentionText = text.substring(offset, endIndex);
+                    //console.log(mentionText);
+                }
                 annotatedArray.push(">" + mentionText + "</span>");
                 prevOffset = endIndex;
             }
-            annotatedText = annotatedText.replace(text.substring(offset, endIndex), annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
+            //annotatedText = annotatedText.replace(text.substring(offset, endIndex), annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
 
         });
 
-        if(typeof facts !== 'undefined') {
-
-            var annotatedOffsets = [];
-            facts.forEach(function (value, key, facts) {
-                //console.log(value);
-                var relationAnnotation = [];
-                var relation = value["relation"];
-                if(typeof relation !== 'undefined' && relation.charLength > 0 && relation.charOffset + relation.charLength <= text.length) {
-                    if(!annotatedOffsets.includes(relation.charOffset)) {
-                        annotatedOffsets.push(relation.charOffset);
-
-
-                        relationAnnotation.push("<span class='mention magenta' data-id='"+relation.text+"-"+key+"'>");
-                        relationAnnotation.push(text.substring(relation.charOffset, relation.charOffset+relation.charLength));
-                        relationAnnotation.push("</span>");
-                        annotatedText = annotatedText.replace(text.substring(relation.charOffset, relation.charOffset+relation.charLength), relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
-                        //console.log(relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'))
-                    }
-                }
-            });
-        }
-//        if (prevOffset <= text.length) {
-//            var endIndex = text.length;
-//            annotatedArray.push(text.substring(prevOffset, endIndex));
+//        if(typeof facts !== 'undefined' && facts !== null) {
+//
+//            var annotatedOffsets = [];
+//            facts.forEach(function (value, key, facts) {
+//                var relationAnnotation = [];
+//                var relation = value["relation"];
+//                console.log(relation)
+//
+//                if(typeof relation !== 'undefined' && relation.charLength > 0 && relation.charOffset + relation.charLength <= text.length) {
+//                    if(!annotatedOffsets.includes(relation.charOffset)) {
+//                        annotatedOffsets.push(relation.charOffset);
+//
+//                        relationAnnotation.push("<span class='mention magenta' data-id='");
+//                        relationAnnotation.push(relation.text.replaceAll(" ", "_")+"-"+key);
+//                        relationAnnotation.push("'>")
+//                        relationAnnotation.push(text.substring(relation.charOffset, relation.charOffset+relation.charLength));
+//                        relationAnnotation.push("</span>");
+//                        console.log("AAA "+relationAnnotation.join(""))
+//                        annotatedText = annotatedText.replace(text.substring(relation.charOffset, relation.charOffset+relation.charLength), relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'));
+//                        console.log(annotatedText);
+//
+//                        //console.log(relationAnnotation.join("").replace(/(?:\r\n|\r|\n)/g, '<br />'))
+//                    }
+//                }
+//            });
 //        }
-
-        return annotatedText;// annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
+        if (prevOffset <= text.length) {
+            var endIndex = text.length;
+            annotatedArray.push(text.substring(prevOffset, endIndex));
+        }
+        return annotatedArray.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
     }
 
     function show_open_facts(facts, language) {
@@ -644,9 +711,11 @@
         viewArray.push('</tr></thead>');
         viewArray.push('<tbody>');
         facts.forEach(function (value, key, facts) {
+
+            var relationWords = value.relation.text.split(" ");
             viewArray.push('<tr data-toggle="collapse" data-target=".accordion-'+key+'" class="clickable-row"><td>');
             viewArray.push(value.subject.text);
-            viewArray.push('</td><td class="mention-box" data-id="'+value.relation.text+'-'+key+'">');
+            viewArray.push('</td><td class="mention-box" data-id="'+relationWords[0]+'-'+key+'">');
             viewArray.push(value.relation.text);
             viewArray.push('</td><td>');
             viewArray.push(value.object.text);
@@ -681,14 +750,22 @@
 
                value.object.entities.forEach(function (e, k, entities) {
                      var entity = entityMetadata[e.id];
-                     var type  = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
-                     viewArray.push("<li class='list-group-item' style='border: none !important;'><span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
-                     if (typeof entity !== 'undefined' && 'id' in entity) {
-                        var entityId = entity.id.replace(/'/g, "&#039;");
-                        viewArray.push(" data-id='" + entityId + "'>");
+                     if(typeof entity !== 'undefined') {
+                         var type = "UNKNOWN";
+                         if(typeof entity["type"] !== 'undefined') {
+                            var type  = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
+                         }
+
+                         viewArray.push("<li class='list-group-item' style='border: none !important;'><span class='mention  " + typeColors[type] + "' rel='tooltip' data-toggle='tooltip' data-placement='top' title='Click here to get more info.'");
+                         if (typeof entity !== 'undefined' && 'id' in entity) {
+                            var entityId = entity.id.replace(/'/g, "&#039;");
+                            viewArray.push(" data-id='" + entityId + "'>");
+                         }
+                         if(typeof entityMetadata[e.id].names !== 'undefined') {
+                            viewArray.push(entityMetadata[e.id].names[language].value);
+                         }
+                         viewArray.push("</span></li>");
                      }
-                     viewArray.push(entityMetadata[e.id].names[language].value);
-                     viewArray.push("</span></li>");
                });
                viewArray.push('</ul>');
             } else {
@@ -774,6 +851,8 @@
         } else {
             type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
         }
+
+
         var errorImage = getDefaultImageByType(type);
 
         var includeImages = $("#ambiverse-text-input").data("entity-images");
@@ -875,6 +954,7 @@
        } else {
             type = upperCaseFirstLetter(lowerCaseAllWordsExceptFirstLetters(entity["type"]));
        }
+
 
         var errorImage = getDefaultImageByType(type);
 
@@ -1240,6 +1320,7 @@
     }
 
     function lowerCaseAllWordsExceptFirstLetters(string) {
+
         return string.replace(/\w\S*/g, function (word) {
             return word.charAt(0) + word.slice(1).toLowerCase();
         });
