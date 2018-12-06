@@ -15,7 +15,7 @@
  * @since      0.9
  * @package    Ambiverse_ELD
  * @subpackage Ambiverse_ELD/includes
- * @author     Dragan Milchevski <dragarn@ambiverse.com>
+ *
  */
 class Ambiverse_ELD_Activator {
     /**

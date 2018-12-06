@@ -16,7 +16,7 @@
  *
  * @package    Ambiverse_ELD
  * @subpackage Ambiverse_ELD/admin
- * @author     Dragan Milchevski <dragan@ambiverse.com>
+ *
  */
 class Ambiverse_ELD_Admin
 {
