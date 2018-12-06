@@ -110,6 +110,11 @@
     border-bottom-color: #eea236;
 }
 
+.mention.purple {
+    color: #542B73;
+    border-bottom-color: #3A1357;
+}
+
 .mention.gray {
     color: #333;
     border-bottom: 1px dotted #777;
@@ -162,6 +167,12 @@
     background-color: #fbdfb7;
     border-bottom-color: #ec971f;
     color: #ec971f;
+}
+
+.mention.purple.selected {
+    background-color: #b9a7c6;
+    border-bottom-color: #3A1357;
+    color: #23043A;
 }
 
 .mention.gray.selected {
@@ -297,6 +308,12 @@
 {
     box-shadow:0 1px 4px rgba(213, 133, 18, 0.5), 0 0 40px rgba(213, 133, 18, 0.2) inset;
 }
+
+.entity-box.purple.selected
+{
+    box-shadow:0 1px 4px rgba(84, 43, 115, 0.5), 0 0 40px rgba(84, 42, 115, 0.2) inset;
+}
+
 .entity-box.light-green.selected
 {
     box-shadow:0 1px 4px rgba(40, 180, 115, 0.5), 0 0 40px rgba(40, 180, 115, 0.2) inset;
@@ -354,6 +371,10 @@
 
 .entity-box .ribbon.orange {
     background: #ec971f;
+}
+
+.entity-box .ribbon.purple {
+    background: #9475AC;
 }
 
 .entity-box .ribbon.gray {

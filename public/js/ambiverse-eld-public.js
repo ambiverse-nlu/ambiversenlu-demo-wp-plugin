@@ -41,7 +41,7 @@
         Other: "red",
         Unknown: "gray",
         Relation: "magenta",
-        Concept: "gray",
+        Concept: "purple",
     };
 
 
@@ -317,11 +317,18 @@
 
                 var allEntities = [];
                 var entitiesWithconfidences = {};
+                var entity2Type = [];
+
+                entities.forEach(function (entity, key) {
+                    entity2Type[entity.id]=entity.type;
+                });
+
 
                 var mentionsCopy = clone(mentions);
                 mentionsCopy.forEach(function (mention, key) {
 
                     if (!jQuery.isEmptyObject(mention["entity"])) {
+
 
                         var confidence = 0;
                         if(version === "v1") {
@@ -346,8 +353,11 @@
                         entitiesWithconfidences[mention["entity"].id] = confidence;
                         allEntities.push(entityMetadata[mention["entity"].id]);
 
+                        //Put the Highlevel type from the entity linking not from the knowledge Graph.
+                        mention["entity"]["type"]=entity2Type[mention["entity"].id];
 
                     } else {
+
                         var entity = {};
                         entity["id"] = mention["text"];
                         entity["name"] = null;
@@ -375,12 +385,15 @@
                     objects.push(value);
                  });
 
-                 splitRelationWords(facts).forEach(function(value, key) {
-                    objects.push(value);
-                 });
+                 if(typeof facts !== 'undefined' && facts !== null) {
+                     splitRelationWords(facts).forEach(function(value, key) {
+                        objects.push(value);
+                     });
+                 }
 
                  //Sort the objects to be shown by the offset
                  objects.sort(function(a,b) {return (a.charOffset > b.charOffset) ? 1 : ((b.charOffset > a.charOffset) ? -1 : 0);} );
+
 
                 $("#ambiverse-annotated-text").html(annotate_text(objects));
 
@@ -558,6 +571,7 @@
                     $('#ambiverse-json-output code').each(function (i, block) {
                         hljs.highlightBlock(block);
                     });
+
 
                     $("#ambiverse-annotated-text").html(annotate_text(mentions));
 
@@ -1321,9 +1335,13 @@
 
     function lowerCaseAllWordsExceptFirstLetters(string) {
 
-        return string.replace(/\w\S*/g, function (word) {
-            return word.charAt(0) + word.slice(1).toLowerCase();
-        });
+        if(typeof string !== 'undefined') {
+            return string.replace(/\w\S*/g, function (word) {
+                return word.charAt(0) + word.slice(1).toLowerCase();
+            });
+        } else {
+            return "";
+        }
     }
 
 
