@@ -276,6 +276,22 @@ class Ambiverse_ELD_Public {
 
             $supportedLanguages[] = "Chinese";
         }
+        /*if(isset($this->options["settings-language-ru"])) {
+            $languages[] =  array(
+                "value" => "ru",
+                "label" => "Russian",
+            );
+
+            $supportedLanguages[] = "Russian";
+        }
+        if(isset($this->options["settings-language-cs"])) {
+            $languages[] =  array(
+                "value" => "cs",
+                "label" => "Czech",
+            );
+
+            $supportedLanguages[] = "Czech";
+        }*/
 
         $supportedLanguagesString = "";
         for($i=0; $i<sizeof($supportedLanguages); $i++) {

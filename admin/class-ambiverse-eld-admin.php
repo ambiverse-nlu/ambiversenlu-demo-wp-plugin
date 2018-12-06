@@ -514,6 +514,16 @@ class Ambiverse_ELD_Admin
                     'description' 	=> 'Chinese',
                     'id' 			=> 'settings-language-zh',
                     'value' 		=> 'zh'
+                ),
+                4 => array(
+                    'description' 	=> 'Russian',
+                    'id' 			=> 'settings-language-ru',
+                    'value' 		=> 'ru'
+                ),
+                5 => array(
+                    'description' 	=> 'Czech',
+                    'id' 			=> 'settings-language-cs',
+                    'value' 		=> 'cs'
                 )
             )
         );
