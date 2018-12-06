@@ -2,7 +2,7 @@
 /**
  * Fired during plugin activation
  *
- * @link              https://ambiverse.com
+ * @link              https://ambiversenlu.mpi-inf.mpg.de
  * @since             1.0
  * @package           Ambiverse_ELD
  * @subpackage        Ambiverse_ELD/includes

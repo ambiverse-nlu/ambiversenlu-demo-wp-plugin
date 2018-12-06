@@ -2,7 +2,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       https://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD
@@ -39,7 +39,7 @@ class Ambiverse_ELD_Loader {
 
     /**
      *
-     * @since 0.9
+     * @@since 1.0
      * @access private
      * @var object|Ambiverse_ELD_Loader
      */
@@ -121,7 +121,7 @@ class Ambiverse_ELD_Loader {
     /**
      * Get an instance of this class
      *
-     * @since 0.9
+     * @@since 1.0
      * @return object|\Ambiverse_ELD_Loader
      */
     public static function get_instance() {

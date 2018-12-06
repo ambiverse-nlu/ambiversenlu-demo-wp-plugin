@@ -5,7 +5,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD

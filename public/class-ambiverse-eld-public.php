@@ -2,7 +2,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_entitylinking_demo
@@ -121,7 +121,7 @@ class Ambiverse_ELD_Public {
     /**
      * Sends POST request to the Ambiverse API and analyzes the document
      *
-     * @since 0.9
+     * @@since 1.0
      *
      * @return json $response JSON of the text analyzis API
      */
@@ -218,7 +218,7 @@ class Ambiverse_ELD_Public {
      * @uses	get_option
      * @uses	get_layout
      *
-     * @since 0.9
+     * @@since 1.0
      *
      * @return	mixed	$output		Output of the buffer
      *
@@ -335,7 +335,7 @@ class Ambiverse_ELD_Public {
     /**
      * Sets the class variable $options
      *
-     * @since 0.9
+     * @@since 1.0
      */
     private function set_options() {
         $this->options = get_option( $this->plugin_name . '-options' );

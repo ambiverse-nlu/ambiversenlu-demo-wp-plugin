@@ -3,7 +3,7 @@
  * Displays all entities in the text
  *
  *
- * @link       http://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD

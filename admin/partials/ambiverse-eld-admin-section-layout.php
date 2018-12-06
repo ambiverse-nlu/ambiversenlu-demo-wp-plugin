@@ -4,7 +4,7 @@
  *
  * Enter text below to appear below the section title on the Settings page
  *
- * @link       http://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD

@@ -4,7 +4,7 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       http://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD

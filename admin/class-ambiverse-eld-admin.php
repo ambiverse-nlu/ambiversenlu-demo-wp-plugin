@@ -2,7 +2,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       https://ambiverse.com
+ * @link       https://ambiversenlu.mpi-inf.mpg.de
  * @since      0.9
  *
  * @package    Ambiverse_ELD
@@ -124,7 +124,7 @@ class Ambiverse_ELD_Admin
     /**
      * Register the settings menu for this plugin into the WordPress Settings menu.
      *
-     * @since 0.9
+     * @@since 1.0
      */
     public function add_admin_menu()
     {
@@ -149,7 +149,7 @@ class Ambiverse_ELD_Admin
     /**
      * Render the settings page for this plugin.
      *
-     * @since 0.9
+     * @@since 1.0
      */
     public function page_options()
     {
@@ -159,7 +159,7 @@ class Ambiverse_ELD_Admin
     /**
      * Registers settings sections with WordPress
      *
-     * @since 0.9
+     * @@since 1.0
      */
     public function register_sections()
     {
