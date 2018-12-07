@@ -1,5 +1,9 @@
 # AmbiverseNLU Demo
 
+![Wordpress Plugin: Required WP Version](https://img.shields.io/wordpress/plugin/wp-version/bbpress.svg)
+![Wordpress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/bbpress.svg)
+[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
 AmbiverseNLU WordPress plugin for the demo on [https://ambiversenlu.mpi-inf.mpg.de](https://ambiversenlu.mpi-inf.mpg.de). 
 
 For the example sentence below:
