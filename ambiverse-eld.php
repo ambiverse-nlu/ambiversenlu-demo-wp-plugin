@@ -10,7 +10,7 @@
  * Plugin Name:       Ambiverse Entity Linking Demo
  * Plugin URI:        https://ambiversenlu.mpi-inf.mpg.de/plugins/ambiverse-entitylinking-demo
  * Description:       Displays the capability of the Ambiverse Natural Understanding API in a nice output for the ambiverse.com web page
- * Version:           0.9
+ * Version:           1.0
  * Author:            AmbiverseNLU
  * Author URI:        https://ambiversenlu.mpi-inf.mpg.de
  * License:           GPL-2.0+
